@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body.home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url(assets/images/door-with-magic-portal-travel-another-universe-time-rocky-surface-alien-planet-space-cartoon-game-ui/2310-w026-n002-3909B-p1-3909.jpg);
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  color: white;
+  font-family: sans-serif;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 60px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px black;
+}
+
+p {
+  font-size: 20px;
+  text-shadow: 0 0 10px black;
+}
+
+.startButton {
+  display: inline-block;
+  margin-top: 40px;
+  padding: 15px 40px;
+  background-color: #4b0082;
+  color: white;
+  font-size: 20px;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.startButton:hover {
+  background-color: #7b1fa2;
+}
+
+body.world1 {
+  background-image: url(door-with-magic-portal-travel-another-universe-time-rocky-surface-alien-planet-space-cartoon-game-ui/2310-w026-n002-3909B-p1-3909.jpg);
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
