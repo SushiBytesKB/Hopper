@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hopper - World 3: The Future</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            background-color: #001100;
+            position: relative;
+        }
+        .scene {
+            margin-bottom: 30px;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .choice-btn {
+            background-color: #003300;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .choice-btn:hover {
+            background-color: #005500;
+        }
+        .locked-choice {
+            background-color: #333333;
+            color: #666666;
+            border: 1px solid #666666;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+        .locked-choice::after {
+            content: "🔒";
+            float: right;
+        }
+        .game-over {
+            text-align: center;
+            padding: 40px;
+            border: 2px solid #ff0000;
+            background-color: #330000;
+        }
+        .restart-btn {
+            background-color: #660000;
+            color: #ff9999;
+            border: 1px solid #ff0000;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .crystal-success {
+            text-align: center;
+            padding: 40px;
+            border: 2px solid #00ffff;
+            background-color: #003333;
+        }
+        .timer {
+            font-size: 24px;
+            color: #ffff00;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .photo-opportunity {
+            text-align: center;
+            padding: 40px;
+            border: 2px solid #ffff00;
+            background-color: #333300;
+        }
+        .camera-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 50%;
+            border: 2px solid #00ff00;
+        }
+        .future-background {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23111"/><rect x="50" y="100" width="60" height="150" fill="%23333"/><rect x="150" y="80" width="50" height="170" fill="%23555"/><rect x="250" y="120" width="70" height="130" fill="%23444"/><circle cx="350" cy="50" r="30" fill="%23ff6600"/><rect x="80" y="180" width="240" height="10" fill="%23666"/><circle cx="100" cy="190" r="8" fill="%23999"/><circle cx="200" cy="190" r="8" fill="%23999"/><circle cx="300" cy="190" r="8" fill="%23999"/></svg>');
+            background-size: cover;
+            background-position: center;
+            min-height: 200px;
+            border: 2px solid #666;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Camera Icon (only shown when cloak is active) -->
+        <div id="cameraIcon" class="camera-icon hidden">📷</div>
+
+        <div id="scene1" class="scene">
+            <h2>WORLD 3: THE FUTURE</h2>
+            <p>You stumble out of the time vortex, your senses reeling. The air is cold and smells of ozone and rust.</p>
+            <p>You're in the same arrival chamber, but it's in decay. Wires snake from broken panels, and a thick layer of dust covers everything.</p>
+            <p>A single red, unblinking eye of a camera lens focuses on you from the ceiling.</p>
+            <p><em>"Subject identified. Temporal anomaly. Designation: Pest."</em></p>
+            
+            <div class="choices">
+                <button class="choice-btn" onclick="chooseOption('reason')">> Try to reason with the AI. ("We come in peace!")</button>
+                <button class="choice-btn" onclick="chooseOption('barricade')">> Barricade the door. (You see a metal pipe on the floor.)</button>
+                <button class="choice-btn" onclick="chooseOption('hide')">> Hide in the corner. (Maybe it won't see you.)</button>
+                <button id="cloakOption" class="locked-choice" onclick="chooseOption('cloak')">> Activate cloaking device to become invisible to sensors. (Requires Cloak)</button>
+            </div>
+        </div>
+
+        <div id="reasonOutcome" class="scene hidden">
+            <p>You look up at the camera lens, raising your hands in what you hope is a universal gesture of peace.</p>
+            <p>"We come in peace! I mean no harm!" you shout.</p>
+            <p><em>"Error: 'Peace' is not a recognized command. Initiating pest control."</em></p>
+            <p>The door glows red-hot for a moment, then explodes inwards with tremendous force.</p>
+            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+        </div>
+
+        <div id="barricadeOutcome" class="scene hidden">
+            <p>You grab the metal pipe and jam it through the door handle, barricading yourself in.</p>
+            <p>For a brief moment, you feel a sense of security.</p>
+            <p>Then the door begins to glow cherry red. The metal pipe melts and drips to the floor.</p>
+            <p>Within seconds, the door is completely vaporized.</p>
+            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+        </div>
+
+        <div id="hideOutcome" class="scene hidden">
+            <p>You scramble to the darkest corner of the room, pressing yourself against the cold wall.</p>
+            <p>"Maybe it won't see me," you whisper to yourself.</p>
+            <p>A bright red scanner beam sweeps across the room, immediately stopping on your position.</p>
+            <p><em>"Target acquired."</em></p>
+            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+        </div>
+
+        <!-- Cloak without crystal = Still die -->
+        <div id="cloakOutcome" class="scene hidden">
+            <div class="crystal-success">
+                <h2>CLOAKING DEVICE ACTIVATED</h2>
+                <p>You activate your cloaking device, becoming invisible to the AI's sensors.</p>
+                <p>The red camera lens scans the room but passes right over you.</p>
+                <p><em>"Anomaly lost. Resuming patrol patterns."</em></p>
+                <p><strong>You're invisible to the AI!</strong></p>
+                
+                <div id="noCrystalOutcome" class="hidden">
+                    <p>However, without the Chrono-Crystal's energy signature, you can't safely navigate the temporal distortions.</p>
+                    <p>The unstable timeline begins to unravel around you...</p>
+                    <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+                </div>
+                
+                <div id="hasCrystalOutcome">
+                    <p>The Chrono-Crystal in your pocket glows, stabilizing the temporal field around you.</p>
+                    <p>You have a brief window to document this terrible future...</p>
+                    <button class="choice-btn" onclick="startPhotoOpportunity()">Step outside and document the future</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Opportunity Scene -->
+        <div id="photoOpportunity" class="scene hidden">
+            <div class="photo-opportunity">
+                <h2>DOCUMENT THE FUTURE</h2>
+                <p>You step out into the ruined city. The Chrono-Crystal protects you from temporal instability.</p>
+                
+                <!-- Temporary future background -->
+                <div class="future-background"></div>
+                
+                <p>You see the horrifying truth: skyscrapers in ruins, robot patrols, and a polluted orange sky.</p>
+                <p>This is what happens if the AI isn't stopped! You need photographic evidence.</p>
+                
+                <div class="timer" id="timer">15 seconds remaining</div>
+                
+                <div class="choices">
+                    <button class="choice-btn" onclick="takePicture('ruins')">> Focus on the ruined cityscape</button>
+                    <button class="choice-btn" onclick="takePicture('robots')">> Focus on the patrolling robots</button>
+                    <button class="choice-btn" onclick="takePicture('sky')">> Focus on the polluted sky</button>
+                    <button class="choice-btn" onclick="escapeNow()">> Escape immediately (risk missing evidence)</button>
+                </div>
+                
+                <div id="pictureResults" class="hidden">
+                    <p id="resultText"></p>
+                    <button class="choice-btn" onclick="completeMission()">Return to present with evidence</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="gameOver" class="game-over hidden">
+            <h2>GAME OVER</h2>
+            <p>A squad of sleek, deadly Hunter-Killer robots pours into the room, weapons already aimed.</p>
+            <p>There is 0% chance of survival.</p>
+            <p><em>GAME OVER - The Singularity Ate Your Homework</em></p>
+            <button class="restart-btn" onclick="goToIndex()">Try Again? (This time, maybe do something?)</button>
+        </div>
+
+        <div id="missionSuccess" class="crystal-success hidden">
+            <h2>MISSION ACCOMPLISHED</h2>
+            <p>You successfully documented the terrible future and escaped back to your own time!</p>
+            <p>The photographic evidence you gathered will help convince others to stop the AI before it's too late.</p>
+            <button class="restart-btn" onclick="goToIndex()">Return to Main Menu</button>
+        </div>
+    </div>
+
+    <script>
+        let hasCrystal = false;
+        let hasCloak = false;
+        let timeLeft = 15;
+        let timerInterval;
+        let picturesTaken = 0;
+
+        function chooseOption(choice) {
+            document.getElementById('scene1').classList.add('hidden');
+            
+            if (choice === 'cloak' && !hasCloak) {
+                alert("You don't have the cloaking device! You must find it to select this option.");
+                document.getElementById('scene1').classList.remove('hidden');
+                return;
+            }
+
+            let outcomeDiv = document.getElementById(choice + 'Outcome');
+            outcomeDiv.classList.remove('hidden');
+
+            // Show appropriate outcome for cloak based on crystal
+            if (choice === 'cloak') {
+                if (hasCrystal) {
+                    document.getElementById('hasCrystalOutcome').classList.remove('hidden');
+                    document.getElementById('noCrystalOutcome').classList.add('hidden');
+                } else {
+                    document.getElementById('hasCrystalOutcome').classList.add('hidden');
+                    document.getElementById('noCrystalOutcome').classList.remove('hidden');
+                }
+            }
+        }
+
+        function startPhotoOpportunity() {
+            document.getElementById('cloakOutcome').classList.add('hidden');
+            document.getElementById('photoOpportunity').classList.remove('hidden');
+            document.getElementById('cameraIcon').classList.remove('hidden');
+            
+            timeLeft = 15;
+            picturesTaken = 0;
+            updateTimer();
+            
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    timeUp();
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').textContent = timeLeft + " seconds remaining";
+            if (timeLeft <= 5) {
+                document.getElementById('timer').style.color = '#ff0000';
+            }
+        }
+
+        function timeUp() {
+            clearInterval(timerInterval);
+            alert("TOO LATE! The temporal window is closing!");
+            showGameOver();
+        }
+
+        function takePicture(type) {
+            picturesTaken++;
+            let resultText = document.getElementById('resultText');
+            
+            switch(type) {
+                case 'ruins':
+                    resultText.textContent = "✓ Captured the ruined cityscape. The destruction is unimaginable.";
+                    break;
+                case 'robots':
+                    resultText.textContent = "✓ Documented the robot patrols. They move with chilling precision.";
+                    break;
+                case 'sky':
+                    resultText.textContent = "✓ Recorded the polluted atmosphere. The air is barely breathable.";
+                    break;
+            }
+            
+            // Show camera flash effect
+            document.body.style.backgroundColor = '#ffffff';
+            setTimeout(() => {
+                document.body.style.backgroundColor = '#0a0a0a';
+            }, 200);
+            
+            document.getElementById('pictureResults').classList.remove('hidden');
+            
+            if (picturesTaken >= 2) {
+                setTimeout(function() {
+                    resultText.textContent += "\n\nYou have enough evidence! The future must be changed!";
+                }, 1000);
+            }
+        }
+
+        function escapeNow() {
+            clearInterval(timerInterval);
+            if (picturesTaken < 2) {
+                if (confirm("Are you sure? You haven't collected enough evidence yet!")) {
+                    completeMission();
+                }
+            } else {
+                completeMission();
+            }
+        }
+
+        function completeMission() {
+            clearInterval(timerInterval);
+            document.getElementById('photoOpportunity').classList.add('hidden');
+            document.getElementById('cameraIcon').classList.add('hidden');
+            document.getElementById('missionSuccess').classList.remove('hidden');
+        }
+
+        function showGameOver() {
+            clearInterval(timerInterval);
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.add('hidden');
+            });
+            document.getElementById('cameraIcon').classList.add('hidden');
+            document.getElementById('gameOver').classList.remove('hidden');
+        }
+
+        function goToIndex() {
+            window.location.href = '../index.html';
+        }
+
+        // Testing functions - remove in final version
+        function acquireCrystal() {
+            hasCrystal = true;
+            alert("Acquired Chrono-Crystal!");
+        }
+
+        function acquireCloak() {
+            hasCloak = true;
+            const cloakBtn = document.getElementById('cloakOption');
+            cloakBtn.className = 'choice-btn';
+            cloakBtn.innerHTML = '> Activate cloaking device to become invisible to sensors.';
+            alert("Acquired Cloaking Device!");
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === '1') {
+                acquireCrystal();
+            }
+            if (event.key === '2') {
+                acquireCloak();
+            }
+        });
+    </script>
+</body>
+</html>
