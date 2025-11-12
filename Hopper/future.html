@@ -1,10 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Future</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body class="world3">
-    <script src="js/app.js"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hopper - World 3: The Future</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            background-color: #001100;
+        }
+        .scene {
+            margin-bottom: 30px;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .choice-btn {
+            background-color: #003300;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .choice-btn:hover {
+            background-color: #005500;
+        }
+        .locked-choice {
+            background-color: #333333;
+            color: #666666;
+            border: 1px solid #666666;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+        .locked-choice::after {
+            content: "🔒";
+            float: right;
+        }
+        .game-over {
+            text-align: center;
+            padding: 40px;
+            border: 2px solid #ff0000;
+            background-color: #330000;
+        }
+        .restart-btn {
+            background-color: #660000;
+            color: #ff9999;
+            border: 1px solid #ff0000;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .crystal-success {
+            text-align: center;
+            padding: 40px;
+            border: 2px solid #00ffff;
+            background-color: #003333;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="scene1" class="scene">
+            <h2>WORLD 3: THE FUTURE</h2>
+            <p>You stumble out of the time vortex, your senses reeling. The air is cold and smells of ozone and rust.</p>
+            <p>You're in the same arrival chamber, but it's in decay. Wires snake from broken panels, and a thick layer of dust covers everything.</p>
+            <p>A single red, unblinking eye of a camera lens focuses on you from the ceiling.</p>
+            <p><em>"Subject identified. Temporal anomaly. Designation: Pest."</em></p>
+            
+            <div class="choices">
+                <button class="choice-btn" onclick="chooseOption('reason')">> Try to reason with the AI. ("We come in peace!")</button>
+                <button class="choice-btn" onclick="chooseOption('barricade')">> Barricade the door. (You see a metal pipe on the floor.)</button>
+                <button class="choice-btn" onclick="chooseOption('hide')">> Hide in the corner. (Maybe it won't see you.)</button>
+                <button id="crystalOption" class="locked-choice" onclick="chooseOption('crystal')">> Use the Chrono-Crystal to disrupt the AI's temporal sensors. (Requires Chrono-Crystal)</button>
+            </div>
+        </div>
+
+        <div id="reasonOutcome" class="scene hidden">
+            <p>You look up at the camera lens, raising your hands in what you hope is a universal gesture of peace.</p>
+            <p>"We come in peace! I mean no harm!" you shout.</p>
+            <p><em>"Error: 'Peace' is not a recognized command. Initiating pest control."</em></p>
+            <p>The door glows red-hot for a moment, then explodes inwards with tremendous force.</p>
+            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+        </div>
+
+        <div id="barricadeOutcome" class="scene hidden">
+            <p>You grab the metal pipe and jam it through the door handle, barricading yourself in.</p>
+            <p>For a brief moment, you feel a sense of security.</p>
+            <p>Then the door begins to glow cherry red. The metal pipe melts and drips to the floor.</p>
+            <p>Within seconds, the door is completely vaporized.</p>
+            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+        </div>
+
+        <div id="hideOutcome" class="scene hidden">
+            <p>You scramble to the darkest corner of the room, pressing yourself against the cold wall.</p>
+            <p>"Maybe it won't see me," you whisper to yourself.</p>
+            <p>A bright red scanner beam sweeps across the room, immediately stopping on your position.</p>
+            <p><em>"Target acquired."</em></p>
+            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+        </div>
+
+        <div id="crystalOutcome" class="scene hidden">
+            <div class="crystal-success">
+                <h2>CHRONO-CRYSTAL ACTIVATED</h2>
+                <p>You pull the glowing Chrono-Crystal from your pocket. It pulses with ancient energy.</p>
+                <p>As you raise it toward the camera, the crystal emits a blinding flash of blue light.</p>
+                <p><em>"T-t-temporal anomaly d-detected... P-paradox... C-c-cannot... compute..."</em></p>
+                <p>The red camera lens flickers erratically, then goes dark. The grinding sounds outside cease immediately.</p>
+                <p><strong>You've temporarily disabled the AI's surveillance!</strong></p>
+                <button class="choice-btn" onclick="continueStory()">Continue your journey...</button>
+            </div>
+        </div>
+
+        <div id="gameOver" class="game-over hidden">
+            <h2>GAME OVER</h2>
+            <p>A squad of sleek, deadly Hunter-Killer robots pours into the room, weapons already aimed.</p>
+            <p>There is 0% chance of survival.</p>
+            <p><em>GAME OVER - The Singularity Ate Your Homework</em></p>
+            <button class="restart-btn" onclick="goToIndex()">Try Again? (This time, maybe do something?)</button>
+        </div>
+    </div>
+
+    <script>
+        let hasCrystal = false;
+
+        function chooseOption(choice) {
+            document.getElementById('scene1').classList.add('hidden');
+            
+            if (choice === 'crystal' && !hasCrystal) {
+                alert("You don't have the Chrono-Crystal! You must find the crystal to select this option.");
+                document.getElementById('scene1').classList.remove('hidden');
+                return;
+            }
+
+            let outcomeDiv = document.getElementById(choice + 'Outcome');
+            outcomeDiv.classList.remove('hidden');
+        }
+
+        function showGameOver() {
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.add('hidden');
+            });
+            document.getElementById('gameOver').classList.remove('hidden');
+        }
+
+        function continueStory() {
+            alert("The story continues! You successfully bypassed the AI guards.");
+            restartGame();
+        }
+
+        function restartGame() {
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.add('hidden');
+            });
+            document.getElementById('scene1').classList.remove('hidden');
+        }
+
+        function goToIndex() {
+            window.location.href = '/index.html';
+        }
+
+        function acquireCrystal() {
+            hasCrystal = true;
+            const crystalBtn = document.getElementById('crystalOption');
+            crystalBtn.className = 'choice-btn';
+            crystalBtn.innerHTML = '> Use the Chrono-Crystal to disrupt the AI\'s temporal sensors.';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === '1') {
+                acquireCrystal();
+            }
+        });
+    </script>
+</body>
 </html>
