@@ -1,0 +1,72 @@
+* {
+margin: 0;
+padding: 0;
+}
+
+body.present {
+  background-color: gray;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.dialogueHistory {
+  width: 15%;
+  height: 100vh;
+
+  float: left;
+}
+
+.playerField {
+  background-image: url(assets/images/Lab1.jpg);
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  width: 70%;
+  height: 100vh;
+  display: inline-block;
+  position: relative;
+}
+
+.inventory {
+  width: 15%;
+  height: 100vh;
+  float: right;
+}
+
+.buttonLeft
+{
+  bottom: 0;
+  left: 0;
+  position: absolute;
+
+  padding: 30px 40px;
+  background-color: #4b0082;
+  color: white;
+  font-size: 20px;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.buttonRight
+{
+  bottom: 0;
+  right: 0;
+  position: absolute;
+
+  padding: 30px 40px;
+  background-color: #4b0082;
+  color: white;
+  font-size: 20px;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.buttonLeft:hover
+{
+  background-color: #7b1fa2;
+}
+
+.buttonRight:hover
+{
+  background-color: #7b1fa2;
+}
