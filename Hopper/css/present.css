@@ -17,7 +17,29 @@ body.present {
 }
 
 .playerField {
-  background-image: url(assets/images/Lab1.jpg);
+  background-image: url(../assets/images/Lab1.jpg);
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  width: 70%;
+  height: 100vh;
+  display: inline-block;
+  position: relative;
+}
+
+.playerFieldLeft {
+  background-image: url(../assets/images/Lab1.jpg);
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  width: 70%;
+  height: 100vh;
+  display: inline-block;
+  position: relative;
+}
+
+.playerFieldRight {
+  background-image: url(../assets/images/Lab1.jpg);
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
