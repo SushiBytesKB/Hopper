@@ -42,26 +42,16 @@ const decisionPoints =
             if (!playerState.hasPowerCrystal && !playerState.hasCloak && playerState.numOfHops == 0)
             {
                 return 'terrible'
-
+            }
+            if (playerState.hasCloak)
+            {
+                return 'futureCloak';
             }
         },
         results:
         {
             'terrible' : 'futureTerrible',
-
-
-        }
-    },
-
-    'checkPast': 
-    {
-        condition: (playerState) =>
-        {
-            
-        },
-        results:
-        {
-            
+            'futureCloak' : 'futureWithCloak'
         }
     },
 
@@ -88,7 +78,6 @@ const decisionPoints =
                 if(!playerState.hasBow && !playerState.hasPicture)
                 {
                     return 'badNoBowNoPicture';
-
                 }
 
                 if(playerState.hasBow && playerState.hasPicture)
@@ -108,6 +97,17 @@ const decisionPoints =
             
         }
     },
+
+    'futureWithCloak': 
+    {
+        text: "You peek out beneath you Cloak of Invisibility and to your surprise, the Cyborgs actually look right through you as if you were not there. This buys you enough time to grab your trusty camera and snap a quick picture of the disaster.",
+        options: 
+        [
+            {text: "You leap back into the Hopper Machine and make a run for the safe Present before your Cloak of Invisibility runs out or malfuncitons; it should not happen but better safe than sorry you think", next: "checkPresent"},
+            {}
+        ]
+    },
+
 
     'presentNoCrystal': 
     {
