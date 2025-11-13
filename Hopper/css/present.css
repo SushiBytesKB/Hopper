@@ -1,6 +1,6 @@
 * {
-margin: 0;
-padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 body.present {
@@ -17,7 +17,7 @@ body.present {
 }
 
 .playerField {
-  background-image: url(../assets/images/Lab1.jpg);
+  background-image: url(../assets/images/presentAssets/labCenter.png);
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
@@ -55,8 +55,7 @@ body.present {
   float: right;
 }
 
-.buttonLeft
-{
+.buttonLeft {
   bottom: 0;
   left: 0;
   position: absolute;
@@ -69,8 +68,7 @@ body.present {
   text-decoration: none;
 }
 
-.buttonRight
-{
+.buttonRight {
   bottom: 0;
   right: 0;
   position: absolute;
@@ -83,12 +81,10 @@ body.present {
   text-decoration: none;
 }
 
-.buttonLeft:hover
-{
+.buttonLeft:hover {
   background-color: #7b1fa2;
 }
 
-.buttonRight:hover
-{
+.buttonRight:hover {
   background-color: #7b1fa2;
 }
