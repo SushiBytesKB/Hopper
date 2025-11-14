@@ -1,23 +1,23 @@
 * {
-margin: 0;
-padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
-body.present {
+body.past {
   background-color: gray;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  font-family: "Press Start 2P", cursive;
 }
 .dialogueHistory {
   width: 15%;
   height: 100vh;
-
   float: left;
 }
 
 .playerField {
-  background-image: url(../assets/images/Lab1.jpg);
+  background-image: url(../assets/images/past_lab.png);
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
@@ -25,10 +25,11 @@ body.present {
   height: 100vh;
   display: inline-block;
   position: relative;
+  
 }
 
 .playerFieldLeft {
-  background-image: url(../assets/images/Lab1.jpg);
+  background-image: url(../assets/images/past_lab.png);
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
@@ -39,7 +40,7 @@ body.present {
 }
 
 .playerFieldRight {
-  background-image: url(../assets/images/Lab1.jpg);
+  background-image: url(../assets/images/past_lab.png);
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
@@ -53,10 +54,10 @@ body.present {
   width: 15%;
   height: 100vh;
   float: right;
+  color: white;
 }
 
-.buttonLeft
-{
+.buttonLeft {
   bottom: 0;
   left: 0;
   position: absolute;
@@ -69,8 +70,7 @@ body.present {
   text-decoration: none;
 }
 
-.buttonRight
-{
+.buttonRight {
   bottom: 0;
   right: 0;
   position: absolute;
@@ -83,12 +83,65 @@ body.present {
   text-decoration: none;
 }
 
-.buttonLeft:hover
-{
+.buttonLeft:hover {
   background-color: #7b1fa2;
 }
 
-.buttonRight:hover
-{
+.buttonRight:hover {
   background-color: #7b1fa2;
 }
+
+#crystalSpot {
+  position: absolute;
+  top: 61%;
+  left: 47%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+}
+
+#crystalSpot:hover {
+  outline: 2px dashed yellow;
+}
+
+#bowSpot {
+  position: absolute;
+  top: 60%; /* adjust to match your image */
+  left: 70%; /* adjust as needed */
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+}
+
+#bowSpot:hover {
+  outline: 2px dashed red;
+}
+
+/* inventory list container */
+#inventoryList {
+  padding-left: 20px;     /* space for the custom marker */
+  margin: 0;
+}
+
+/* each inventory item: keep flex layout for image + text */
+#inventoryList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;              /* space between image and text */
+  margin: 10px 0;         /* vertical spacing between items */
+  position: relative;     /* required for ::before positioning */
+  padding-left: 18px;     /* space so marker doesn't overlap content */
+}
+
+/* custom bullet — will appear at the left of each li */
+#inventoryList li::before {
+  content: "•";           /* the dot character */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;           /* bullet color (change if needed) */
+  font-size: 18px;        /* bullet size */
+  line-height: 1;
+}
+
