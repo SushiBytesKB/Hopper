@@ -4,88 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hopper - World 3: The Future</title>
-    <style>
-        body {
-            font-family: 'Courier New', monospace;
-            background-color: #0a0a0a;
-            color: #00ff00;
-            margin: 0;
-            padding: 20px;
-        }
-        .game-container {
-            max-width: 800px;
-            margin: 0 auto;
-            border: 1px solid #00ff00;
-            padding: 20px;
-            background-color: #001100;
-        }
-        .scene {
-            margin-bottom: 30px;
-        }
-        .choices {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 30px 0;
-        }
-        .choice-btn {
-            background-color: #003300;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .choice-btn:hover {
-            background-color: #005500;
-        }
-        .locked-choice {
-            background-color: #333333;
-            color: #666666;
-            border: 1px solid #666666;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-        }
-        .locked-choice::after {
-            content: "🔒";
-            float: right;
-        }
-        .game-over {
-            text-align: center;
-            padding: 40px;
-            border: 2px solid #ff0000;
-            background-color: #330000;
-        }
-        .restart-btn {
-            background-color: #660000;
-            color: #ff9999;
-            border: 1px solid #ff0000;
-            padding: 15px 30px;
-            font-family: 'Courier New', monospace;
-            font-size: 18px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .hidden {
-            display: none;
-        }
-        .crystal-success {
-            text-align: center;
-            padding: 40px;
-            border: 2px solid #00ffff;
-            background-color: #003333;
-        }
-    </style>
+    <link rel="stylesheet" href="css/future.css">
 </head>
-<body>
+<body class="future">
     <div class="game-container">
         <div id="scene1" class="scene">
             <h2>WORLD 3: THE FUTURE</h2>
-            <p>You stumble out of the time vortex, your senses reeling. The air is cold and smells of ozone and rust.</p>
-            <p>You're in the same arrival chamber, but it's in decay. Wires snake from broken panels, and a thick layer of dust covers everything.</p>
-            <p>A single red, unblinking eye of a camera lens focuses on you from the ceiling.</p>
+            <div class="robot-greeting">
+                <div class="scene-text">
+                    <p>You stumble out of the time vortex, your senses reeling. The air is cold and smells of ozone and rust.</p>
+                    <p>You're in the same arrival chamber, but it's in decay. Wires snake from broken panels, and a thick layer of dust covers everything.</p>
+                    <p>Before you stands a towering robot, its metallic frame scorched and battle-worn. One of its optical sensors glows with malevolent red light.</p>
+                </div>
+                <div class="robot-image">
+                    <img src="../assets/images/futureAssets/destructiveRobot.png" alt="Destructive Robot">
+                </div>
+            </div>
             <p><em>"Subject identified. Temporal anomaly. Designation: Pest."</em></p>
             
             <div class="choices">

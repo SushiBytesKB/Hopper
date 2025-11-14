@@ -1,0 +1,158 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body.future {
+    background-color: #0a0a0a;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    background-image: url('../assets/images/futureAssets/labDestroyed.png');
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+}
+
+body.future::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dialogueHistory {
+    width: 15%;
+    height: 100vh;
+    float: left;
+}
+
+.game-container {
+    width: 70%;
+    height: 100vh;
+    display: inline-block;
+    position: relative;
+    overflow-y: auto;
+    border: 1px solid #00ff00;
+    background-color: rgba(0, 17, 0, 0.85);
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.inventory {
+    width: 15%;
+    height: 100vh;
+    float: right;
+}
+
+.scene {
+    margin-bottom: 30px;
+}
+
+.robot-greeting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.robot-image {
+    flex-shrink: 0;
+    max-width: 200px;
+    height: auto;
+}
+
+.robot-image img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 10px #00ff00);
+}
+
+.scene-text {
+    flex: 1;
+}
+
+.choices {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.choice-btn {
+    background-color: #4b0082;
+    color: white;
+
+    border: 1px solid #00ff00;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 12px;
+    text-decoration: none;
+    text-align: left;
+}
+
+.choice-btn:hover {
+    background-color: #7b1fa2;
+}
+
+.locked-choice {
+    background-color: #333333;
+    color: #666666;
+    border: 1px solid #666666;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    border-radius: 12px;
+}
+
+.locked-choice::after {
+    content: "🔒";
+    float: right;
+}
+
+.game-over {
+    text-align: center;
+    padding: 40px;
+    border: 2px solid #ff0000;
+    background-color: #330000;
+    border-radius: 12px;
+}
+
+.restart-btn {
+    background-color: #4b0082;
+    color: white;
+    border: 1px solid #ff0000;
+    padding: 15px 30px;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 12px;
+}
+
+.restart-btn:hover {
+    background-color: #7b1fa2;
+}
+
+.hidden {
+    display: none;
+}
+
+.crystal-success {
+    text-align: center;
+    padding: 40px;
+    border: 2px solid #00ffff;
+    background-color: #003333;
+    border-radius: 12px;
+}
