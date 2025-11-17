@@ -83,13 +83,17 @@ body.future {
 .dialogue-entry.options-list { 
   padding: 8px 12px;
   background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 255, 0, 0.08);
+  border-radius: 8px;
 }
 .dialogue-entry.options-list .dialogue-option {
   padding: 8px 10px;
   margin: 6px 0;
   background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(0, 255, 0, 0.08);
   border-radius: 6px;
   cursor: pointer;
+  user-select: none;
 }
 .dialogue-entry.options-list .dialogue-option:hover {
   background: rgba(255,255,255,0.04);
@@ -97,6 +101,11 @@ body.future {
 .dialogue-entry.options-list .dialogue-option.locked {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.dialogue-entry.options-list .dialogue-option.locked::after {
+  content: "🔒";
+  float: right;
+  opacity: 0.8;
 }
 
 .scene {
@@ -119,8 +128,12 @@ body.future {
 
 .robot-image {
   flex-shrink: 0;
-  max-width: 200px;
+  max-width: 500px;
   height: auto;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .robot-image img {

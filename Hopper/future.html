@@ -18,18 +18,18 @@
         <div id="scene1" class="scene">
             <h2>WORLD 3: THE FUTURE</h2>
             <div class="robot-greeting">
-                <div class="scene-text">
+                <div class="scene-text hidden">
                     <p>You stumble out of the time vortex, your senses reeling. The air is cold and smells of ozone and rust.</p>
                     <p>You're in the same arrival chamber, but it's in decay. Wires snake from broken panels, and a thick layer of dust covers everything.</p>
                     <p>Before you stands a towering robot, its metallic frame scorched and battle-worn. One of its optical sensors glows with malevolent red light.</p>
                 </div>
                 <div class="robot-image">
-                    <img src="../assets/images/futureAssets/destructiveRobot.png" alt="Destructive Robot">
+                    <img src="assets/images/futureAssets/destructiveRobot.png" alt="Destructive Robot">
                 </div>
             </div>
-            <p><em>"Subject identified. Temporal anomaly. Designation: Pest."</em></p>
+            <p class="hidden"><em>"Subject identified. Temporal anomaly. Designation: Pest."</em></p>
             
-            <div class="choices">
+            <div class="choices hidden">
                 <button class="choice-btn" onclick="chooseOption('reason')">> Try to reason with the AI. ("We come in peace!")</button>
                 <button class="choice-btn" onclick="chooseOption('barricade')">> Barricade the door. (You see a metal pipe on the floor.)</button>
                 <button class="choice-btn" onclick="chooseOption('hide')">> Hide in the corner. (Maybe it won't see you.)</button>
@@ -120,7 +120,6 @@
         }
 
         function chooseOption(choice) {
-            // add player's choice to dialogue history
             appendDialogue('player', choiceText[choice] || choice);
 
             if (choice === 'crystal' && !hasCrystal) {
@@ -129,25 +128,65 @@
                 return;
             }
 
-            // hide scene1 and show outcome
-            document.getElementById('scene1').classList.add('hidden');
-            let outcomeDiv = document.getElementById(choice + 'Outcome');
+            const outcomeDiv = document.getElementById(choice + 'Outcome');
             if (outcomeDiv) {
-                outcomeDiv.classList.remove('hidden');
-                // append first paragraph of the outcome to dialogue history
-                const p = outcomeDiv.querySelector('p');
-                if (p && p.innerText.trim()) {
-                    appendDialogue('system', p.innerText.trim());
+                const ps = outcomeDiv.querySelectorAll('p');
+                ps.forEach(p => {
+                    const t = p.innerText.trim();
+                    if (t) appendDialogue('system', t);
+                });
+
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = 'dialogue-entry options-list';
+                const header = document.createElement('div');
+                header.style.fontWeight = '700';
+                header.style.marginBottom = '6px';
+                header.textContent = 'Next:';
+                optionsWrapper.appendChild(header);
+
+                const opt = document.createElement('div');
+                opt.className = 'dialogue-option';
+                if (choice === 'crystal') {
+                    opt.dataset.key = 'continueStory';
+                    opt.textContent = 'Continue your journey...';
+                    opt.addEventListener('click', function() { continueStory(); });
+                } else {
+                    opt.dataset.key = 'showGameOver';
+                    opt.textContent = 'Continue...';
+                    opt.addEventListener('click', function() { showGameOver(); });
+                }
+                optionsWrapper.appendChild(opt);
+                const list = document.getElementById('dialogueList');
+                if (list) {
+                    list.appendChild(optionsWrapper);
+                    list.scrollTop = list.scrollHeight;
                 }
             }
         }
 
         function showGameOver() {
-            document.querySelectorAll('.scene').forEach(scene => {
-                scene.classList.add('hidden');
-            });
-            document.getElementById('gameOver').classList.remove('hidden');
             appendDialogue('system', 'GAME OVER - You were detected.');
+
+            const optionsWrapper = document.createElement('div');
+            optionsWrapper.className = 'dialogue-entry options-list';
+            const header = document.createElement('div');
+            header.style.fontWeight = '700';
+            header.style.marginBottom = '6px';
+            header.textContent = 'Next:';
+            optionsWrapper.appendChild(header);
+
+            const retry = document.createElement('div');
+            retry.className = 'dialogue-option';
+            retry.dataset.key = 'goToIndex';
+            retry.textContent = 'Try Again? (This time, maybe do something?)';
+            retry.addEventListener('click', function() { goToIndex(); });
+            optionsWrapper.appendChild(retry);
+
+            const list = document.getElementById('dialogueList');
+            if (list) {
+                list.appendChild(optionsWrapper);
+                list.scrollTop = list.scrollHeight;
+            }
         }
 
         function continueStory() {
@@ -156,10 +195,6 @@
         }
 
         function restartGame() {
-            document.querySelectorAll('.scene').forEach(scene => {
-                scene.classList.add('hidden');
-            });
-            document.getElementById('scene1').classList.remove('hidden');
             appendDialogue('system', 'Restarted the encounter.');
         }
 
@@ -177,6 +212,11 @@
             }
             appendDialogue('system', 'You acquired the Chrono-Crystal.');
             appendInventory('Chrono-Crystal');
+
+            const leftCrystal = document.querySelector('.dialogue-option[data-key="crystal"]');
+            if (leftCrystal) {
+                leftCrystal.classList.remove('locked');
+            }
         }
 
         document.addEventListener('keydown', function(event) {
@@ -216,6 +256,7 @@
 
                     const opt = document.createElement('div');
                     opt.className = 'dialogue-option';
+                    opt.dataset.key = key;
                     opt.textContent = (btn.textContent || btn.innerText).trim();
                     // indicate locked state visually
                     if (btn.classList.contains('locked-choice')) {
