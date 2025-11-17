@@ -10,7 +10,7 @@ body.present {
   overflow: hidden;
 }
 .dialogueHistory {
-  width: 15%;
+  width: 25%;
   height: 100vh;
 
   float: left;
@@ -21,36 +21,36 @@ body.present {
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  width: 70%;
+  width: 50%;
   height: 100vh;
   display: inline-block;
   position: relative;
 }
 
 .playerFieldLeft {
-  background-image: url(../assets/images/Lab1.jpg);
+  background-image: url(../assets/images/presentAssets/leftRoom/labLeft.png);
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  width: 70%;
+  width: 50%;
   height: 100vh;
   display: inline-block;
   position: relative;
 }
 
 .playerFieldRight {
-  background-image: url(../assets/images/Lab1.jpg);
+  background-image: url(../assets/images/presentAssets/rightRoom/labRight.png);
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  width: 70%;
+  width: 50%;
   height: 100vh;
   display: inline-block;
   position: relative;
 }
 
 .inventory {
-  width: 15%;
+  width: 25%;
   height: 100vh;
   float: right;
 }
@@ -87,4 +87,35 @@ body.present {
 
 .buttonRight:hover {
   background-color: #7b1fa2;
+}
+
+img.Hopper_Device_Broken
+{
+  height: 50%;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+img.Professor
+{
+  height: 40%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.machine
+{
+  position: absolute;
+  width: 80px;
+  height: 100px;
+}
+
+.professor
+{
+  position: absolute;
+  width: 80px;
+  height: 100px;
+  margin-left: 100px;
 }
