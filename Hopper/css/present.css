@@ -125,3 +125,8 @@ img.Professor
   background-color: transparent;
   border: none;
 }
+
+.btnDecisionOptions
+{
+  margin: 1rem;
+}

@@ -254,6 +254,7 @@ function showOptions(nodeID)
     for (const option of node.options)
         {
             const button = document.createElement('button');
+            button.className = "btnDecisionOptions";
             button.innerText = option.button;
 
             button.addEventListener('click', () =>
