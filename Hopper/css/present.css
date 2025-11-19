@@ -10,7 +10,7 @@ body.present {
   overflow: hidden;
 }
 .dialogueHistory {
-  width: 15%;
+  width: 25%;
   height: 100vh;
 
   float: left;
@@ -21,7 +21,7 @@ body.present {
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  width: 70%;
+  width: 50%;
   height: 100vh;
   display: inline-block;
   position: relative;
@@ -32,7 +32,7 @@ body.present {
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  width: 70%;
+  width: 50%;
   height: 100vh;
   display: inline-block;
   position: relative;
@@ -43,14 +43,14 @@ body.present {
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  width: 70%;
+  width: 50%;
   height: 100vh;
   display: inline-block;
   position: relative;
 }
 
 .inventory {
-  width: 15%;
+  width: 25%;
   height: 100vh;
   float: right;
 }

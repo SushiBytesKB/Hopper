@@ -5,11 +5,26 @@
     <link rel="stylesheet" href="css/past.css" />
   </head>
   <body class="past">
-    <div class="dialogueHistory"></div>
+    <div class="dialogueHistory">
+      <h3>Dialogue History</h3>
+      <div class="dialogueContent"></div>
+    </div>
     <div class="playerFieldLeft">
+      <img id="gremlin" src="assets/images/pastAssets/gremlin.png" />
       <a class="buttonRight" href="past.html">Go Right</a>
     </div>
-    <div class="inventory"></div>
-    <script src="javascrypt.js"></script>
+    <div class="inventory">
+      <h3>Inventory</h3>
+      <div class="inventoryContent">
+      <div id="inventorySlots">
+          <div class="slot" id="slot1"></div>
+          <div class="slot" id="slot2"></div>
+          <div class="slot" id="slot3"></div>
+          <div class="slot" id="slot4"></div>
+          <div class="slot" id="slot5"></div>
+        </div>
+      </div>
+    </div>
+    <script src="js/app.js"></script>
   </body>
 </html>
