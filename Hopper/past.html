@@ -2,9 +2,38 @@
 <html lang="en">
   <head>
     <title>Past</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/past.css" />
   </head>
-  <body class="world2">
+  <body class="past">
+    <div class="dialogueHistory">
+      <h3>Dialogue History</h3>
+      <div class="dialogueContent"></div>
+    </div>
+    <div class="playerField">
+      <img id="gremlin" src="assets/images/pastAssets/gremlin.png" />
+      <a class="buttonLeft" href="pastLeft.html">Go Left</a>
+      <a class="buttonRight" href="pastRight.html">Go Right</a>
+
+      <div id="crystalSpot"></div>
+      <div id="bowSpot"></div>
+    </div>
+    <div class="inventory">
+      <h3>Inventory</h3>
+      <div class="inventoryContent">
+        <div id="inventorySlots">
+          <div class="slot" id="slot1"></div>
+          <div class="slot" id="slot2"></div>
+          <div class="slot" id="slot3"></div>
+          <div class="slot" id="slot4"></div>
+          <div class="slot" id="slot5"></div>
+        </div>
+      </div>
+    </div>
+
     <script src="js/app.js"></script>
   </body>
 </html>
