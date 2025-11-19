@@ -14,6 +14,14 @@ body.present {
   height: 100vh;
 
   float: left;
+
+  font-size: 40px;
+  font-family: dialogueFont;
+}
+
+@font-face {
+  font-family: dialogueFont;
+  src: url(../assets/fonts/minecraft.ttf); 
 }
 
 .playerField {
@@ -92,9 +100,10 @@ body.present {
 img.Hopper_Device_Broken
 {
   height: 50%;
-  margin-left: auto;
+  right: 32%;
+  top: 17%;
   margin-right: auto;
-
+  position: absolute;
 }
 
 img.Professor
@@ -107,15 +116,12 @@ img.Professor
 
 .machine
 {
+  height: 40%;
+  width: 20%;
+  right: 39%;
+  top: 22%;
+  margin-right: auto;
   position: absolute;
-  width: 80px;
-  height: 100px;
-}
-
-.professor
-{
-  position: absolute;
-  width: 80px;
-  height: 100px;
-  margin-left: 100px;
+  background-color: transparent;
+  border: none;
 }
