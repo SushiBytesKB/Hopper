@@ -8,7 +8,7 @@ body.home {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url('../assets/images/startBackground.jpg');
+  background-image: url("../assets/images/startBackground.jpg");
   background-size: cover;
   background-position: center;
   text-align: center;
@@ -42,4 +42,3 @@ p {
 .startButton:hover {
   background-color: #7b1fa2;
 }
-
