@@ -23,15 +23,22 @@ body.past {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
+  display: flex;           
+  flex-direction: column; /* This stacks children vertically to avoid the dialogue history from hiding the text when it overflows*/
 }
 
 .dialogueContent {
   background-color: rgba(13, 13, 13, 0.7);
   color: bisque;
   padding: 18px;
-  height: 100%; /* Making it fill the rest of the dialogueHistory container */
-  overflow-y: scroll;
-  padding-top: 90px;
+  
+  flex: 1;           /* This is used to make the dialogue history take up all remaining space */
+  min-height: 0;     /* Thiis is required for scrolling to work inside Flexbox */
+  overflow-y: auto;  /* Shows scrollbar only when needed */
+  
+  padding-top: 75px; 
+  padding-bottom: 20px; 
 }
 
 .dialogueContent p {
@@ -153,15 +160,15 @@ body.past {
 
 #crystalSpot {
   position: absolute;
-  top: 40%;
+  top: 64.8%;
   left: 44%;
   width: 80px;
   height: 80px;
   cursor: pointer;
-}
 
-#crystalSpot:hover {
-  outline: 2px dashed yellow;
+  object-fit: contain; /* This prevents the image from looking stretched */
+  transition: transform 0.2s ease; /* Creates a smooth movement on hover */
+  z-index: 10; /* This ensures the spot sits on top of the background */
 }
 
 #bowSpot {
@@ -171,10 +178,10 @@ body.past {
   width: 80px;
   height: 80px;
   cursor: pointer;
-}
 
-#bowSpot:hover {
-  outline: 2px dashed red;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  z-index: 10;
 }
 
 #gremlin {
@@ -200,9 +207,6 @@ body.past {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  /* optional highlight for debugging */
-  /* background: rgba(255, 255, 255, 0.1); */
 }
 
 .slot img {
@@ -212,27 +216,28 @@ body.past {
 }
 
 #slot1 {
-  top: 14%;
-  left: 11%;
+  top: 13%;
+  left: 10%;
 }
 #slot2 {
-  top: 14%;
-  left: 70%;
+  top: 13%;
+  left: 69.5%;
 }
 #slot3 {
-  top: 32%;
+  top: 28.5%;
   left: 40%;
 }
 #slot4 {
-  top: 51.5%;
+  top: 47%;
   left: 11%;
 }
 #slot5 {
-  top: 51.5%;
+  top: 47%;
   left: 70%;
 }
 
-#slot1:hover {
+/* for testing purposes only */
+/* #slot1:hover {
   outline: 2px dashed green;
 }
 
@@ -247,4 +252,30 @@ body.past {
 }
 #slot5:hover {
   outline: 2px dashed purple;
+}*/ 
+
+#hopperMachine {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 250px;
+  height: auto;
+  cursor: pointer;
 }
+
+/* Adds a glowing animation */
+@keyframes pulseGlow {
+  0% { filter: drop-shadow(0 0 2px rgba(0, 191, 255, 0.5)) brightness(1); }
+  50% { filter: drop-shadow(0 0 10px rgba(0, 191, 255, 1)) brightness(1.2); }
+  100% { filter: drop-shadow(0 0 2px rgba(0, 191, 255, 0.5)) brightness(1); }
+}
+
+#crystalSpot:hover, #bowSpot:hover {
+  outline: none; 
+  transform: scale(1.1); 
+  animation: pulseGlow 1.5s infinite ease-in-out;
+}
+
+
