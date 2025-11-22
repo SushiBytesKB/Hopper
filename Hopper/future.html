@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="css/future.css">
 </head>
 <body class="future">
-    <div class="game-container">
+    <div class="dialogueHistory" id="dialogueHistory">
+        <h3 style="padding:16px;color:#00ff00;font-family:'Courier New',monospace;">Dialogue History</h3>
+        <div id="dialogueList" style="padding:12px;color:#cceeee;overflow-y:auto;height:calc(100vh - 80px);font-family:'Courier New',monospace;"> 
+            <!-- messages will appear here -->
+        </div>
+    </div>
+
+    <div class="playerField">
         <div id="scene1" class="scene">
             <h2>WORLD 3: THE FUTURE</h2>
             <div class="robot-greeting">
@@ -75,20 +82,64 @@
         </div>
     </div>
 
+    <div class="inventory" id="inventory">
+        <h3 style="padding:16px;color:#00ff00;font-family:'Courier New',monospace;">Inventory</h3>
+        <div id="inventoryList" style="padding:12px;color:#cceeee;overflow-y:auto;height:calc(100vh - 80px);font-family:'Courier New',monospace;">
+            <!-- inventory items -->
+        </div>
+    </div>
+
     <script>
         let hasCrystal = false;
 
+        const choiceText = {
+            reason: 'You try to reason with the AI: "We come in peace!"',
+            barricade: 'You try to barricade the door with a metal pipe.',
+            hide: 'You try to hide in the corner.',
+            crystal: 'You attempt to use the Chrono-Crystal.'
+        };
+
+        function appendDialogue(speaker, text) {
+            const list = document.getElementById('dialogueList');
+            if (!list) return;
+            const entry = document.createElement('div');
+            entry.className = 'dialogue-entry ' + (speaker === 'player' ? 'player-entry' : 'system-entry');
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            entry.innerHTML = `<div><small style="opacity:.6">${time}</small> <strong>${speaker === 'player' ? 'You' : 'System'}</strong>: ${text}</div>`;
+            list.appendChild(entry);
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function appendInventory(name) {
+            const inv = document.getElementById('inventoryList');
+            if (!inv) return;
+            const item = document.createElement('div');
+            item.className = 'inventory-entry';
+            item.textContent = name;
+            inv.appendChild(item);
+        }
+
         function chooseOption(choice) {
-            document.getElementById('scene1').classList.add('hidden');
-            
+            // add player's choice to dialogue history
+            appendDialogue('player', choiceText[choice] || choice);
+
             if (choice === 'crystal' && !hasCrystal) {
+                appendDialogue('system', "You don't have the Chrono-Crystal yet.");
                 alert("You don't have the Chrono-Crystal! You must find the crystal to select this option.");
-                document.getElementById('scene1').classList.remove('hidden');
                 return;
             }
 
+            // hide scene1 and show outcome
+            document.getElementById('scene1').classList.add('hidden');
             let outcomeDiv = document.getElementById(choice + 'Outcome');
-            outcomeDiv.classList.remove('hidden');
+            if (outcomeDiv) {
+                outcomeDiv.classList.remove('hidden');
+                // append first paragraph of the outcome to dialogue history
+                const p = outcomeDiv.querySelector('p');
+                if (p && p.innerText.trim()) {
+                    appendDialogue('system', p.innerText.trim());
+                }
+            }
         }
 
         function showGameOver() {
@@ -96,10 +147,11 @@
                 scene.classList.add('hidden');
             });
             document.getElementById('gameOver').classList.remove('hidden');
+            appendDialogue('system', 'GAME OVER - You were detected.');
         }
 
         function continueStory() {
-            alert("The story continues! You successfully bypassed the AI guards.");
+            appendDialogue('system', 'You successfully bypassed the AI guards and continue.');
             restartGame();
         }
 
@@ -108,6 +160,7 @@
                 scene.classList.add('hidden');
             });
             document.getElementById('scene1').classList.remove('hidden');
+            appendDialogue('system', 'Restarted the encounter.');
         }
 
         function goToIndex() {
@@ -115,15 +168,73 @@
         }
 
         function acquireCrystal() {
+            if (hasCrystal) return;
             hasCrystal = true;
             const crystalBtn = document.getElementById('crystalOption');
-            crystalBtn.className = 'choice-btn';
-            crystalBtn.innerHTML = '> Use the Chrono-Crystal to disrupt the AI\'s temporal sensors.';
+            if (crystalBtn) {
+                crystalBtn.className = 'choice-btn';
+                crystalBtn.innerHTML = '> Use the Chrono-Crystal to disrupt the AI\'s temporal sensors.';
+            }
+            appendDialogue('system', 'You acquired the Chrono-Crystal.');
+            appendInventory('Chrono-Crystal');
         }
 
         document.addEventListener('keydown', function(event) {
             if (event.key === '1') {
                 acquireCrystal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const scene1 = document.getElementById('scene1');
+            const dialogueList = document.getElementById('dialogueList');
+            if (!scene1 || !dialogueList) return;
+
+            // populate initial scene paragraphs into dialogue history
+            const paras = scene1.querySelectorAll('p');
+            paras.forEach(p => {
+                const text = p.innerText.trim();
+                if (text) appendDialogue('system', text);
+            });
+
+            // mirror the options into the dialogue history as clickable entries
+            const choices = scene1.querySelectorAll('.choices .choice-btn, .choices .locked-choice');
+            if (choices.length) {
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = 'dialogue-entry options-list';
+                const header = document.createElement('div');
+                header.style.fontWeight = '700';
+                header.style.marginBottom = '6px';
+                header.textContent = 'Options:';
+                optionsWrapper.appendChild(header);
+
+                choices.forEach((btn, idx) => {
+                    // try to extract the choice key from the onclick attribute
+                    let onclick = btn.getAttribute('onclick') || '';
+                    let match = onclick.match(/chooseOption\(['\"](.*?)['\"]\)/);
+                    let key = match ? match[1] : ('option' + idx);
+
+                    const opt = document.createElement('div');
+                    opt.className = 'dialogue-option';
+                    opt.textContent = (btn.textContent || btn.innerText).trim();
+                    // indicate locked state visually
+                    if (btn.classList.contains('locked-choice')) {
+                        opt.classList.add('locked');
+                    }
+                    opt.addEventListener('click', function() {
+                        // if locked, give feedback
+                        if (btn.classList.contains('locked-choice') && !hasCrystal) {
+                            appendDialogue('system', "That option is locked. You need the Chrono-Crystal.");
+                            alert("You don't have the Chrono-Crystal! You must find the crystal to select this option.");
+                            return;
+                        }
+                        chooseOption(key);
+                    });
+                    optionsWrapper.appendChild(opt);
+                });
+
+                dialogueList.appendChild(optionsWrapper);
+                dialogueList.scrollTop = dialogueList.scrollHeight;
             }
         });
     </script>
