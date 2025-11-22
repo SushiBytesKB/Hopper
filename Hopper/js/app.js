@@ -17,7 +17,6 @@ function addToInventory(imageSrc, altText, message) {
 
   // Update daialogue box
   textBox.textContent = message;
-
 }
 
 document.getElementById("crystalSpot").addEventListener("click", function () {
