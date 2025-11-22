@@ -184,6 +184,58 @@ body.past {
   z-index: 10;
 }
 
+#crateSpot {
+  position: absolute;
+  top: 75%;
+  left: 44%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
+#stoneSpot {
+  position: absolute;
+  top: 66.5%;
+  left: 19.2%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
+#urnSpot {
+  position: absolute;
+  top: 73.8%;
+  left: 20%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
+#floorSpot {
+  position: absolute;
+  top: 79%;
+  left: 54%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+
+  object-fit: contain;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
 #gremlin {
   position: absolute;
   bottom: 0;
@@ -265,14 +317,15 @@ body.past {
   cursor: pointer;
 }
 
-/* Adds a glowing animation */
+/* Adds a glowing animation - from gemini */
 @keyframes pulseGlow {
   0% { filter: drop-shadow(0 0 2px rgba(0, 191, 255, 0.5)) brightness(1); }
   50% { filter: drop-shadow(0 0 10px rgba(0, 191, 255, 1)) brightness(1.2); }
   100% { filter: drop-shadow(0 0 2px rgba(0, 191, 255, 0.5)) brightness(1); }
 }
 
-#crystalSpot:hover, #bowSpot:hover {
+/* Apply the glowing effect on hover -also from gemini */
+#crystalSpot:hover, #bowSpot:hover, #crateSpot:hover, #stoneSpot:hover, #urnSpot:hover, #floorSpot:hover {
   outline: none; 
   transform: scale(1.1); 
   animation: pulseGlow 1.5s infinite ease-in-out;

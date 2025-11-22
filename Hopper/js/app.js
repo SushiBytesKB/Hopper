@@ -207,11 +207,60 @@ function setupItems() {
    }
  }
 
+function setupDecoys() {
+  const currentPage = window.location.pathname;
+
+  // Right room decoys (Crate & Stone)
+  if (currentPage.includes("pastRight.html")) {
+    const crate = document.getElementById("crateSpot");
+    const stone = document.getElementById("stoneSpot"); 
+
+    if (crate) {
+      crate.addEventListener("click", () => {
+        typeNewDialogueLine(
+          "Gremlin: HaHaHa, there is nothing here!"
+        );
+      });
+    }
+
+    if (stone) {
+      stone.addEventListener("click", () => {
+        typeNewDialogueLine(
+          "Gremlin: You can do better!! keep looking."
+        );
+      });
+    }
+  }
+
+  // Left room decoys (Floor & Urn) 
+  else if (currentPage.includes("pastLeft.html")) {
+    const floor = document.getElementById("floorSpot");
+    const urn = document.getElementById("urnSpot");
+
+    if (floor) {
+      floor.addEventListener("click", () => {
+        typeNewDialogueLine(
+          "Gremlin: Why are you staring at the floor? Look up!"
+        );
+      });
+    }
+
+    if (urn) {
+      urn.addEventListener("click", () => {
+        typeNewDialogueLine(
+          "Gremlin: Someone looted this urn centuries ago!!"
+        );
+      });
+    }
+  }
+}
+
 // Initialize everything
 window.addEventListener("DOMContentLoaded", () => {
   populateSlotsFromInventory();
   renderDialogue();
   startGremlinIntro();
+  setupDecoys();
   setupItems();
 });
 
