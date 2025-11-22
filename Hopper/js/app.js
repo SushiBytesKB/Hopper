@@ -265,6 +265,7 @@ function showOptions(nodeID)
                 }
                 else
                 {
+                    
                     const travelDetails = document.createElement('p');
                     travelDetails.innerText = option.text;
                     dialogueHistoryElement.appendChild(travelDetails);
@@ -272,6 +273,19 @@ function showOptions(nodeID)
                     nextNode = option.next;
 
                     showNodeText(nextNode);
+
+                    if(button.innerText == "to the Past")
+                    {
+                        window.location.href = 'past.html';
+                    }
+                    else if(button.innerText == "to the Future")
+                    {
+                        window.location.href = 'future.html';
+                    }
+                    else if(button.innerText == "to the Present")
+                    {
+                        window.location.href = 'present.html';
+                    }
                 }
             });
             button.style.height = '100px';
@@ -287,10 +301,6 @@ document.getElementById('machine').addEventListener('click', function()
     showOptions(nextNode);
 });
 
-document.getElementById('professor').addEventListener('click', function()
-{
-    showNodeText(nextNode);
-});
 
 document.getElementById('startButton').addEventListener('click', function()
 {
@@ -441,3 +451,34 @@ window.addEventListener("DOMContentLoaded", () => {
   startGremlinIntro();
   setupItems();
 });
+
+
+// LOGIN POPUP 
+
+function openPopup()
+{
+  document.getElementById('popup').style.display = "flex";
+}
+
+function closePopup()
+{
+  document.getElementById('popup').style.display = 'none';
+}
+
+
+function closePopupSignup()
+{
+  document.getElementById('popupSignup').style.display = 'none';
+}
+
+function openSignup()
+{
+    closePopup();
+    document.getElementById('popupSignup').style.display = "flex";
+}
+
+function closePopupSignupOpenLogin()
+{
+    closePopupSignup();
+    openPopup();
+}

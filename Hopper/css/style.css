@@ -41,5 +41,236 @@ p {
 
 .startButton:hover {
   background-color: #7b1fa2;
+  cursor: pointer;
 }
 
+
+
+
+.popupOverlay
+{
+  display: none; 
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+
+  width: 30%;
+  height: 55%;
+  padding: 3rem 2rem;
+
+  background: linear-gradient(180deg, rgba(45, 20, 85, 0.95), rgba(20, 10, 40, 0.98));
+  border: 3px solid #FFC107; 
+  border-radius: 15px;
+
+  box-shadow: 
+    0 0 20px rgba(255, 193, 7, 0.3),
+    0 15px 40px rgba(0, 0, 0, 0.8); 
+
+  color: #ffffff;
+}
+
+.popupContent
+{
+  width: 100%;
+  height: 100%;
+}
+
+.popupContent h1
+{
+  margin-top: 0;
+  color: #FFC107;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  font-size: 5rem;
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+.popupContent p 
+{
+  color: #dcd6e9;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+.popupContent form
+{
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 2fr;
+  row-gap: 3rem;
+  column-gap: 2rem;
+  align-items: center;
+  margin-bottom: 8rem;
+}
+
+.popupContent label
+{
+  color: #FFC107;
+  font-weight: bold;
+  text-align: right;
+  font-size: 2rem;
+}
+
+.popupContent input
+{
+  width: 80%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #5a3b8c;
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  font-size: 2rem;
+}
+
+.popupContent input:focus
+{
+  outline: none;
+  border-color: #FFC107;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+}
+
+
+.btnLogin
+{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #FFC107; 
+  color: #2e004b;
+  border: none;
+  padding: 15px 40px;
+  margin-top: 3rem;
+
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}
+
+.btnLogin:hover 
+{
+  background-color: #fff;
+  color: #d84315;
+  box-shadow: 0 10px 25px rgba(255, 193, 7, 0.6);
+  cursor: pointer;
+}
+
+.btnGuest
+{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #FFC107; 
+  color: #2e004b;
+  border: none;
+  padding: 10px 35px;
+  margin-top: 3rem;
+
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}
+
+.btnGuest:hover
+{
+  background-color: #fff;
+  color: #d84315;
+  box-shadow: 0 10px 25px rgba(255, 193, 7, 0.6);
+  cursor: pointer;
+}
+
+.signUp
+{
+  display: block;
+  margin: 1.5rem auto 2rem auto;
+  background: transparent;
+  border: none;
+  
+  color: #dcd6e9; 
+  font-size: 1.5rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.signUp:hover
+{
+  color: #ffffff;
+
+  text-shadow: 
+      0 0 5px #FFC107,
+      0 0 15px #FFC107,
+      0 0 30px rgba(255, 193, 7, 0.8);
+}
+
+
+
+
+
+.popupContentSignup
+{
+  width: 100%;
+  height: 100%;
+}
+
+.popupContentSignup h1
+{
+  margin-top: 0;
+  color: #FFC107;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  font-size: 5rem;
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+.popupContentSignup p 
+{
+  color: #dcd6e9;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+.popupContentSignup form
+{
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 2fr;
+  row-gap: 3rem;
+  column-gap: 2rem;
+  align-items: center;
+  margin-bottom: 8rem;
+}
+
+.popupContentSignup label
+{
+  color: #FFC107;
+  font-weight: bold;
+  text-align: right;
+  font-size: 2rem;
+}
+
+.popupContentSignup input
+{
+  width: 80%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #5a3b8c;
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  font-size: 2rem;
+}
+
+.popupContentSignup input:focus
+{
+  outline: none;
+  border-color: #FFC107;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+}

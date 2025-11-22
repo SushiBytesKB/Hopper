@@ -248,3 +248,16 @@ body.past {
 #slot5:hover {
   outline: 2px dashed purple;
 }
+
+
+.machine
+{
+  height: 40%;
+  width: 20%;
+  right: 39%;
+  top: 22%;
+  margin-right: auto;
+  position: absolute;
+  background-color: blue;
+  border: none;
+}

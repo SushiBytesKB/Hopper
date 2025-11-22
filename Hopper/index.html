@@ -7,7 +7,43 @@
   <body class="home">
     <h1>Hopper</h1>
     <p>The Worlds Between Time!!</p>
-    <a href="present.html" class="startButton" id="startButton">Start Game</a>
+    <a onclick="openPopup()"  class="startButton" id="startButton">Start Game</a>
+
+    <div id="popup" class="popupOverlay">
+      <div class="popupContent">
+        <h1>Login</h1>
+        <form action="" class="loginForm">
+          <label for="email">E-Mail Address: </label>
+          <input class="email" type="email" placeholder="example@gmail.com" name="email">
+
+          <label for="password">Password: </label>
+          <input class="password" type="password" placeholder="your super secret password" name="password"> 
+        </form>
+        <button onclick="closePopup()" class="btnLogin">Login</button>
+        <button onclick="closePopup()" class="btnGuest"><a href="present.html"></a>Play as a Guest</button>
+        <button onclick="openSignup()" class="signUp">Don't have an account? Sign up here!</button>
+      </div>
+    </div>
+
+    <div id="popupSignup" class="popupOverlay">
+      <div class="popupContentSignup">
+        <h1>Sign Up</h1>
+        <form action="" class="signupForm">
+
+          <label for="username">Username: </label>
+          <input class="username" type="text" placeholder="MasterHopper21" name="username">
+
+          <label for="email">E-Mail Address: </label>
+          <input class="email" type="email" placeholder="example@gmail.com" name="email">
+
+          <label for="password">Password: </label>
+          <input class="password" type="password" placeholder="your super secret password" name="password"> 
+        </form>
+        <button onclick="closePopupSignup()" class="btnLogin">Sign up</button>
+        <button onclick="closePopupSignup()" class="btnGuest"><a href="present.html"></a>Play as a Guest</button>
+        <button onclick="closePopupSignupOpenLogin()" class="signUp">back to login</button>
+      </div>
+    </div>
 
     <script src="js/app.js"></script>
   </body>
