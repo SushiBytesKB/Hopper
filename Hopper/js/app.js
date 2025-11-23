@@ -6,6 +6,7 @@ import * as uiService from "./uiService.js";
 import * as gameLogic from "./gameLogic.js";
 
 let currentUser = null;
+let currentUserName = "Traveler"; // leaderboard username, kept it as traveler in case we wanna later allow anonymous users to submit score.
 
 document.addEventListener("DOMContentLoaded", () => {
   attachUIListeners();
@@ -16,67 +17,206 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("User is signed in");
       await loadGameForUser(user.uid);
     } else {
-      console.log("User is signed out.");
-      // Start anonymous play logic if not on index
-      if (
-        !window.location.pathname.endsWith("index.html") &&
-        !window.location.pathname.endsWith("/")
-      ) {
-        uiService.updateInventoryUI([]);
-      }
+      console.log("Guest/No User");
     }
   });
-
-  // Check if we are on a game page vs index page to run specific logic
-  if (
-    document.querySelector(".playerField") ||
-    document.querySelector(".playerFieldLeft") ||
-    document.querySelector(".playerFieldRight")
-  ) {
-    // Trigger the Gremlin Intro
-    // TESTING FOR NOW (need to run the project first): we run it if history is empty.
-    const state = gameLogic.getState();
-    if (state.dialogueHistory.length === 0) {
-      uiService.typeNewDialogueLine(
-        "Gremlin: Hey traveler! Welcome to the Ancient Temple. I'm here to guide you. You need to gather the Harmony Crystal and the Ancient Bow hidden in these rooms. Look carefully, they will be key to your future."
-      );
-    }
-
-    setupGameInteractions(); // Click listeners for items/machine
-  }
 });
 
 async function loadGameForUser(uid) {
   const userData = await dataService.loadUserData(uid);
 
   if (userData) {
+    currentUserName = userData.username || "Traveler";
+    const path = window.location.pathname;
+    const pageName = path.substring(path.lastIndexOf("/") + 1) || "index.html";
+
+    // If on index but have a saved game page
+    if (
+      (pageName === "index.html" || pageName === "") &&
+      userData.currentPage &&
+      userData.currentPage !== "index.html"
+    ) {
+      window.location.href = userData.currentPage;
+      return;
+    }
+
+    // sAve current page if different from saved.
+    if (pageName !== "index.html" && pageName !== userData.currentPage) {
+      await dataService.saveUserProgress(uid, { currentPage: pageName });
+    }
+
     gameLogic.setState({
       hasPowerCrystal: userData.inventory.hasHarmonyCrystal,
       hasCloak: userData.inventory.hasCloak,
       hasBow: userData.inventory.hasBow,
       hasPicture: userData.inventory.hasPicture,
       numOfHops: userData.numOfHops,
+      hidingSpots: userData.hidingSpots || {},
+      itemAssignments: userData.itemAssignments || {},
+      startTime: userData.startTime,
+      gameEnded: userData.gameEnded,
       inventory: [],
       dialogueHistory: userData.dialogueHistory || [],
     });
 
     const visualInventory = [];
-    const inventoryState = [];
+    const inventoryPathState = [];
 
     if (userData.inventory.hasHarmonyCrystal) {
-      visualInventory.push(gameLogic.itemDefinitions.crystal.path);
-      inventoryState.push(gameLogic.itemDefinitions.crystal.path);
+      const path = gameLogic.itemDefinitions.crystal.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
+
+      const hopperImg = document.getElementById("hopperDevice");
+      if (hopperImg)
+        hopperImg.src = "assets/images/presentAssets/Hopper_Device_Fixed.png";
     }
     if (userData.inventory.hasBow) {
-      visualInventory.push(gameLogic.itemDefinitions.bow.path);
-      inventoryState.push(gameLogic.itemDefinitions.bow.path);
+      const path = gameLogic.itemDefinitions.bow.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
     }
-    gameLogic.setState({ inventory: inventoryState });
+    if (userData.inventory.hasCloak) {
+      const path = gameLogic.itemDefinitions.cloak.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
+    }
+
+    gameLogic.setState({ inventory: inventoryPathState });
     uiService.updateInventoryUI(visualInventory);
 
     if (userData.dialogueHistory && userData.dialogueHistory.length > 0) {
       uiService.renderDialogue(userData.dialogueHistory);
     }
+
+    if (
+      document.querySelector(".playerField") ||
+      document.querySelector(".playerFieldLeft") ||
+      document.querySelector(".playerFieldRight")
+    ) {
+      if (!userData.introSeen) {
+        handleDialogueUpdate(
+          "Professor: Welcome to the lab my dear friend I have been waiting for you!"
+        );
+        await dataService.saveUserProgress(uid, { introSeen: true });
+      }
+      setupGameInteractions();
+    }
+  }
+}
+
+async function handleDialogueUpdate(text) {
+  uiService.typeNewDialogueLine(text);
+
+  const currentHistory = gameLogic.getState().dialogueHistory;
+  const newHistory = [...currentHistory, text];
+  gameLogic.setState({ dialogueHistory: newHistory });
+
+  if (currentUser) {
+    await dataService.saveUserProgress(currentUser.uid, {
+      dialogueHistory: newHistory,
+    });
+  }
+}
+
+function setupGameInteractions() {
+  const state = gameLogic.getState();
+
+  const machine =
+    document.getElementById("machine") ||
+    document.getElementById("hopperMachine");
+  if (machine) {
+    const newMachine = machine.cloneNode(true);
+    machine.parentNode.replaceChild(newMachine, machine);
+
+    newMachine.addEventListener("click", () => {
+      const pageKey = gameLogic.getNodeForPage(window.location.pathname);
+      const node = gameLogic.decisionPoints[pageKey];
+      if (node) {
+        uiService.typeNewDialogueLine(node.text);
+        uiService.renderOptions(node.options, handleOptionClick);
+      }
+    });
+  }
+
+  // rand hiding spots
+  const allSpots = [
+    "crystalSpot",
+    "bowSpot",
+    "crateSpot",
+    "stoneSpot",
+    "floorSpot",
+    "urnSpot",
+    "boxSpot",
+    "serverSpot",
+  ];
+
+  allSpots.forEach((spotId) => {
+    const el = document.getElementById(spotId);
+    if (el) {
+      const assignedItemKey = state.itemAssignments[spotId];
+
+      // If item assigned and collected, hide the spot
+      if (
+        assignedItemKey &&
+        state.inventory.includes(
+          gameLogic.itemDefinitions[assignedItemKey].path
+        )
+      ) {
+        uiService.hideElement(`#${spotId}`);
+        return;
+      }
+
+      if (state.hidingSpots[spotId]) {
+        if (assignedItemKey) {
+          // Show the item
+          el.src = gameLogic.itemDefinitions[assignedItemKey].revealedImage;
+          el.onclick = () => handleItemPickup(assignedItemKey, spotId);
+        } else {
+          // Show empty
+          el.style.opacity = "0.5";
+          el.onclick = () => handleDialogueUpdate("Just dust and echoes here.");
+        }
+      } else {
+        // Click to reveal
+        el.onclick = () => handleSpotReveal(spotId, assignedItemKey);
+      }
+    }
+  });
+
+  const gremlin = document.getElementById("gremlin");
+  if (gremlin) {
+    gremlin.onclick = () => {
+      const hint = gameLogic.getGremlinHint(window.location.pathname);
+      handleDialogueUpdate(hint);
+    };
+  }
+}
+
+async function handleSpotReveal(spotId, assignedItemKey) {
+  const el = document.getElementById(spotId);
+  handleDialogueUpdate("You investigate...");
+
+  if (assignedItemKey) {
+    // Found an item
+    el.src = gameLogic.itemDefinitions[assignedItemKey].revealedImage;
+    el.onclick = () => handleItemPickup(assignedItemKey, spotId);
+    setTimeout(() => handleDialogueUpdate("You found something useful!"), 1000);
+  } else {
+    // Found nothing
+    el.style.opacity = "0.5";
+    setTimeout(() => handleDialogueUpdate("Nothing here but dust."), 1000);
+    el.onclick = null;
+  }
+
+  const updateData = {};
+  updateData[`hidingSpots.${spotId}`] = true;
+  gameLogic.setState({
+    hidingSpots: { ...gameLogic.getState().hidingSpots, [spotId]: true },
+  });
+
+  if (currentUser) {
+    await dataService.saveUserProgress(currentUser.uid, updateData);
   }
 }
 
@@ -84,170 +224,134 @@ async function handleItemPickup(itemId, elementId) {
   const itemDef = gameLogic.itemDefinitions[itemId];
   if (!itemDef) return;
 
-  const newState = {};
-  newState[itemDef.stateKey] = true;
-
-  const currentState = gameLogic.getState();
-  if (!currentState.inventory.includes(itemDef.path)) {
-    const newInventory = [...currentState.inventory, itemDef.path];
-    newState.inventory = newInventory;
-
+  const state = gameLogic.getState();
+  if (!state.inventory.includes(itemDef.path)) {
+    const newInventory = [...state.inventory, itemDef.path];
+    const newState = { inventory: newInventory };
+    newState[itemDef.stateKey] = true;
     gameLogic.setState(newState);
 
     uiService.hideElement(`#${elementId}`);
-    uiService.typeNewDialogueLine(itemDef.successMessage);
+    handleDialogueUpdate(itemDef.successMessage);
     uiService.updateInventoryUI(newInventory);
 
-    // Save to DB (if user is logged in)
+    if (itemId === "crystal") {
+      const hopperImg = document.getElementById("hopperDevice");
+      if (hopperImg)
+        hopperImg.src = "assets/images/presentAssets/Hopper_Device_Fixed.png";
+    }
+
     if (currentUser) {
       const updateData = {};
-      if (itemId === "crystal")
-        updateData["inventory.hasHarmonyCrystal"] = true;
-      if (itemId === "bow") updateData["inventory.hasBow"] = true;
-
-      // We need to push the new message to the history array
-      // FOR NOW: let's just save the inventory flag
+      updateData[itemDef.dbKey] = true;
       await dataService.saveUserProgress(currentUser.uid, updateData);
     }
   }
 }
 
+function handleOptionClick(option) {
+  if (option.next.includes(".html")) {
+    window.location.href = option.next;
+    return;
+  }
+  const nextNode = gameLogic.decisionPoints[option.next];
+  if (nextNode.condition) {
+    const state = gameLogic.getState();
+    const resultKey = nextNode.condition(state);
+    const actualNode = gameLogic.decisionPoints[nextNode.results[resultKey]];
+    processNode(actualNode);
+  } else {
+    processNode(nextNode);
+  }
+}
+
+async function processNode(node) {
+  handleDialogueUpdate(node.text);
+
+  if (node.isEnding && currentUser && !gameLogic.getState().gameEnded) {
+    await dataService.saveUserProgress(currentUser.uid, { gameEnded: true });
+
+    // Use currentUserName for leaderboard
+    await dataService.submitScore(
+      currentUser.uid,
+      currentUserName,
+      gameLogic.getState().startTime
+    );
+
+    handleDialogueUpdate("SCORE SUBMITTED! Check Leaderboard.");
+    const scores = await dataService.getLeaderboard();
+    uiService.showLeaderboard(scores);
+  }
+
+  if (node.options) uiService.renderOptions(node.options, handleOptionClick);
+}
+
 function attachUIListeners() {
-  // Index Page Buttons
   const startBtn = document.getElementById("startButton");
-  if (startBtn) {
-    startBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      uiService.openPopup("popupSignup");
-    });
-  }
+  if (startBtn) startBtn.onclick = () => uiService.openPopup("popupLogin");
 
-  // Switch to login
-  const goToLoginBtn = document.getElementById("goToLogin");
-  if (goToLoginBtn) {
-    goToLoginBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      uiService.closePopup("popupSignup");
-      uiService.openPopup("popupLogin");
-    });
-  }
+  const guestBtn = document.getElementById("guestLogin");
+  if (guestBtn) guestBtn.onclick = handleAnonymousPlay;
 
-  // Play as Guest
   const guestSignupBtn = document.getElementById("guestSignup");
-  if (guestSignupBtn) {
-    guestSignupBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      uiService.closePopup("popupSignup");
-      handleAnonymousPlay();
-    });
+  if (guestSignupBtn) guestSignupBtn.onclick = handleAnonymousPlay;
+
+  const logoutBtn = document.getElementById("logoutButton");
+  if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+      await authService.logout();
+      window.location.href = "index.html";
+    };
   }
 
-  // Form Submissions
+  const closeLeaderboard = document.getElementById("closeLeaderboard");
+  if (closeLeaderboard) {
+    closeLeaderboard.onclick = () => uiService.closePopup("leaderboardPopup");
+  }
+
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      const user = await authService.login(email, password);
+      if (user) {
+        // Fetch latest user data to redirect to correct page
+        const userData = await dataService.loadUserData(user.uid);
+        window.location.href = userData?.currentPage || "present.html";
+      }
+    };
+  }
+
   const signupForm = document.getElementById("signupForm");
   if (signupForm) {
-    signupForm.addEventListener("submit", async (e) => {
+    signupForm.onsubmit = async (e) => {
       e.preventDefault();
       const email = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
       const username = document.getElementById("signupUsername").value;
-
       const user = await authService.signUp(email, password);
       if (user) {
         await dataService.createUser(user.uid, username, email);
         window.location.href = "present.html";
       }
-    });
+    };
   }
 
-  // Switch to Signup
-  const goToSignupBtn = document.getElementById("goToSignup");
-  if (goToSignupBtn) {
-    goToSignupBtn.addEventListener("click", (e) => {
-      e.preventDefault();
+  const goToSignup = document.getElementById("goToSignup");
+  if (goToSignup)
+    goToSignup.onclick = () => {
       uiService.closePopup("popupLogin");
       uiService.openPopup("popupSignup");
-    });
-  }
+    };
 
-  // Play as Guest
-  const guestLoginBtn = document.getElementById("guestLogin");
-  if (guestLoginBtn) {
-    guestLoginBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      uiService.closePopup("popupLogin");
-      handleAnonymousPlay();
-    });
-  }
-
-  // Login Form Submit
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-
-      const user = await authService.login(email, password);
-      if (user) {
-        window.location.href = "present.html";
-      }
-    });
-  }
-}
-
-function setupGameInteractions() {
-  // Items
-  const crystalSpot = document.getElementById("crystalSpot");
-  if (crystalSpot) {
-    // Check if we already have it to hide it immediately
-    const state = gameLogic.getState();
-    if (state.hasPowerCrystal) {
-      uiService.hideElement("#crystalSpot");
-    } else {
-      crystalSpot.addEventListener("click", () =>
-        handleItemPickup("crystal", "crystalSpot")
-      );
-    }
-  }
-
-  const bowSpot = document.getElementById("bowSpot");
-  if (bowSpot) {
-    const state = gameLogic.getState();
-    if (state.hasBow) {
-      uiService.hideElement("#bowSpot");
-    } else {
-      bowSpot.addEventListener("click", () =>
-        handleItemPickup("bow", "bowSpot")
-      );
-    }
-  }
-
-  // Decision System
-  const machine = document.getElementById("machine");
-  if (machine) {
-    machine.addEventListener("click", () => {
-      // Get current node. For now, hardcoded to 'start' or tracked via state
-      const currentNode = gameLogic.decisionPoints["start"];
-
-      uiService.renderOptions(currentNode.options, (selectedOption) => {
-        uiService.typeNewDialogueLine(selectedOption.text);
-        if (selectedOption.next.includes(".html")) {
-          window.location.href = selectedOption.next;
-        } else {
-          // logic needed if next is not a page
-        }
-      });
-    });
-  }
-
-  // Gremlin Hint Click
-  const gremlin = document.getElementById("gremlin");
-  if (gremlin) {
-    gremlin.addEventListener("click", () => {
-      const hint = gameLogic.getGremlinHint(window.location.pathname);
-      uiService.typeNewDialogueLine(hint);
-    });
-  }
+  const goToLogin = document.getElementById("goToLogin");
+  if (goToLogin)
+    goToLogin.onclick = () => {
+      uiService.closePopup("popupSignup");
+      uiService.openPopup("popupLogin");
+    };
 }
 
 async function handleAnonymousPlay() {
