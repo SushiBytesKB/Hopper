@@ -106,7 +106,7 @@ export async function submitScore(uid, username, endTime) {
 }
 
 // Get top 5 leaderboard
-export async function getLeaderboard(endingType) {
+export async function getLeaderboard() {
   const scores = [];
   try {
     const q = query(
