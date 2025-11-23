@@ -5,9 +5,13 @@
     <link rel="stylesheet" href="css/present.css" />
   </head>
   <body class="present">
-    <div class="dialogueHistory" id="dialogueHistory"></div>
+    <div class="dialogueHistory">
+      <h3>Dialogue History</h3>
+      <div class="dialogueContent"></div>
+    </div>
     <div class="playerField">
       <img
+        id="hopperDevice"
         class="Hopper_Device_Broken"
         src="assets/images/presentAssets/Hopper_Device_Broken.png"
         alt=""
@@ -22,8 +26,28 @@
       <a class="buttonRight" href="presentRight.html">Go Right</a>
     </div>
     <div class="inventory">
-      <div class="optionsContainer" id="optionsContainer"></div>
+      <h3>Inventory</h3>
+      <div id="inventorySlots">
+        <div class="slot" id="slot1"></div>
+        <div class="slot" id="slot2"></div>
+        <div class="slot" id="slot3"></div>
+        <div class="slot" id="slot4"></div>
+        <div class="slot" id="slot5"></div>
+      </div>
     </div>
+
+    <button id="logoutButton">Logout</button>
+
+    <div id="optionsContainer"></div>
+
+    <div id="leaderboardPopup" class="popupLeaderboard">
+      <div class="leaderboardContent">
+        <h2>Leaderboard</h2>
+        <div id="leaderboardList" class="leaderboardList"></div>
+        <button id="closeLeaderboard" class="closeLeaderboard">Close</button>
+      </div>
+    </div>
+
     <script type="module" src="js/app.js"></script>
   </body>
 </html>

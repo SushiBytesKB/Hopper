@@ -5,11 +5,31 @@
     <link rel="stylesheet" href="css/present.css" />
   </head>
   <body class="present">
-    <div class="dialogueHistory"></div>
+    <div class="dialogueHistory">
+      <h3>Dialogue History</h3>
+      <div class="dialogueContent"></div>
+    </div>
     <div class="playerFieldLeft">
       <a class="buttonRight" href="present.html">Go Right</a>
+
+      <img
+        id="boxSpot"
+        src="assets/images/presentAssets/leftRoom/boxHidingSpot.png"
+        alt="Cardboard Box"
+      />
     </div>
-    <div class="inventory"></div>
+    <div class="inventory">
+      <h3>Inventory</h3>
+      <div id="inventorySlots">
+        <div class="slot" id="slot1"></div>
+        <div class="slot" id="slot2"></div>
+        <div class="slot" id="slot3"></div>
+        <div class="slot" id="slot4"></div>
+        <div class="slot" id="slot5"></div>
+      </div>
+    </div>
+    <button id="logoutButton">Logout</button>
+    <div id="optionsContainer"></div>
     <script type="module" src="js/app.js"></script>
   </body>
 </html>
