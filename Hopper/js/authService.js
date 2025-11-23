@@ -7,7 +7,7 @@ import {
   signOut,
   EmailAuthProvider,
   linkWithCredential,
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 export async function signUp(email, password) {
   try {

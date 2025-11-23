@@ -5,11 +5,30 @@
     <link rel="stylesheet" href="css/past.css" />
   </head>
   <body class="past">
-    <div class="dialogueHistory"></div>
-    <div class="playerFieldLeft">
-      <a class="buttonRight" href="past.html">Go Right</a>
+    <div class="dialogueHistory">
+      <h3>Dialogue History</h3>
+      <div class="dialogueContent"></div>
     </div>
-    <div class="inventory"></div>
-    <script src="javascrypt.js"></script>
+    <div class="playerFieldLeft">
+      <img id="hopperMachine" src="assets/images/pastAssets/leftRoom/pastHopperMachine.png" />
+      <img id="gremlin" src="assets/images/pastAssets/gremlin.png" onclick="gremlinHint()"/>
+      <a class="buttonRight" href="past.html">Go Right</a>
+
+      <img id="floorSpot" src="assets/images/pastAssets/leftRoom/floorHidingSpot.png"></img>
+      <img id="urnSpot" src="assets/images/pastAssets/leftRoom/urnHidingSpot.png"></img>
+    </div>
+    <div class="inventory">
+      <h3>Inventory</h3>
+      <div class="inventoryContent">
+      <div id="inventorySlots">
+          <div class="slot" id="slot1"></div>
+          <div class="slot" id="slot2"></div>
+          <div class="slot" id="slot3"></div>
+          <div class="slot" id="slot4"></div>
+          <div class="slot" id="slot5"></div>
+        </div>
+      </div>
+    </div>
+    <script src="js/app.js"></script>
   </body>
 </html>
