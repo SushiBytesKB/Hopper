@@ -1,13 +1,13 @@
-const typeSound = new Audio("../assets/audios/click.mp3");
+const typeSound = new Audio("assets/audios/click.mp3");
 typeSound.volume = 0.4;
 
 export function clearDialogue() {
-  const box = document.querySelector(".dialogueHistory"); // updated selector
+  const box = document.querySelector(".dialogueContent");
   if (box) box.innerHTML = "";
 }
 
 export function renderDialogue(dialogueArray) {
-  const box = document.querySelector(".dialogueHistory");
+  const box = document.querySelector(".dialogueContent");
   if (!box) return;
 
   box.innerHTML = dialogueArray.map((line) => `<p>${line}</p>`).join("");
@@ -15,44 +15,37 @@ export function renderDialogue(dialogueArray) {
 }
 
 export function typeNewDialogueLine(text, onComplete) {
-  const box = document.querySelector(".dialogueHistory");
+  const box = document.querySelector(".dialogueContent");
   if (!box) return;
 
   const p = document.createElement("p");
   box.appendChild(p);
 
   let i = 0;
-
-  // Reset sound initially
-  typeSound.pause();
   typeSound.currentTime = 0;
 
+  // testing: increase speed (15ms)
+  // update: looks good, finalized
   const typer = setInterval(() => {
     p.textContent += text[i];
 
-    // Reset position
-    typeSound.currentTime = 0;
-
-    // prevents console errors if typing is too fast
-    const playPromise = typeSound.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((error) => {
-        // Auto play is prevented
-      });
+    // Play sound every few chars else it sounds funny and ridiculous lol
+    if (i % 2 === 0) {
+      const playPromise = typeSound.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
     }
 
     i++;
+    box.scrollTop = box.scrollHeight; // auto-scroll
+
     if (i >= text.length) {
       clearInterval(typer);
-
-      // We pause it to prevent last play() command from going again and again
       typeSound.pause();
-      typeSound.currentTime = 0;
-
       if (onComplete) onComplete();
     }
-    box.scrollTop = box.scrollHeight;
-  }, 30); // Default speed
+  }, 15);
 }
 
 export function updateInventoryUI(inventoryItems) {
@@ -74,7 +67,7 @@ function placeItemInNextSlot(imageSrc) {
     if (slot && !slot.hasChildNodes()) {
       const img = document.createElement("img");
       img.src = imageSrc;
-      img.alt = "Inventory item";
+      img.alt = "Item";
       slot.appendChild(img);
       return;
     }
@@ -82,19 +75,18 @@ function placeItemInNextSlot(imageSrc) {
 }
 
 export function renderOptions(options, onOptionClick) {
-  const container = document.getElementById("optionsContainer"); // mke sure to check this exists in HTML
+  const container = document.getElementById("optionsContainer");
   if (!container) return;
 
   container.innerHTML = "";
+  container.style.display = "flex";
 
   options.forEach((option) => {
     const button = document.createElement("button");
     button.className = "btnDecisionOptions";
     button.innerText = option.button;
-    button.style.height = "100px";
-    button.style.width = "100px";
-
     button.addEventListener("click", () => {
+      container.innerHTML = "";
       onOptionClick(option);
     });
 
@@ -103,14 +95,44 @@ export function renderOptions(options, onOptionClick) {
 }
 
 export function openPopup(id) {
-  document.getElementById(id).style.display = "flex";
+  const el = document.getElementById(id);
+  if (el) el.style.display = "flex";
 }
 
 export function closePopup(id) {
-  document.getElementById(id).style.display = "none";
+  const el = document.getElementById(id);
+  if (el) el.style.display = "none";
 }
 
 export function hideElement(selector) {
-  document.querySelector(selector).style.pointerEvents = "none";
-  document.querySelector(selector).style.opacity = "0";
+  const el = document.querySelector(selector);
+  if (el) {
+    el.style.pointerEvents = "none";
+    el.style.opacity = "0";
+  }
+}
+
+// Leaderboard Popup
+export function showLeaderboard(scores) {
+  const popup = document.getElementById("leaderboardPopup");
+  const list = document.getElementById("leaderboardList");
+
+  if (!popup || !list) return;
+
+  let html = "";
+  if (scores.length === 0) {
+    html = "<p>No scores yet.</p>";
+  } else {
+    scores.forEach((s, index) => {
+      html += `
+                <div class="leaderboardEntry">
+                    <span>#${index + 1} ${s.username}</span>
+                    <span>${s.duration.toFixed(2)}s</span>
+                </div>
+            `;
+    });
+  }
+
+  list.innerHTML = html;
+  popup.style.display = "flex";
 }

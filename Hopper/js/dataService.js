@@ -1,5 +1,4 @@
 import { db } from "./firebaseInit.js";
-
 import {
   doc,
   setDoc,
@@ -17,38 +16,71 @@ import {
 export async function createUser(uid, username, email) {
   const userDocRef = doc(db, "users", uid);
 
+  // --- ITEM RANDOMIZATION LOGIC ---
+  const pastSpots = [
+    "crystalSpot",
+    "bowSpot",
+    "crateSpot",
+    "stoneSpot",
+    "floorSpot",
+    "urnSpot",
+  ];
+  const presentSpots = ["boxSpot", "serverSpot"];
+
+  // Shuffle Helper
+  const shuffle = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
+  const shuffledPast = shuffle([...pastSpots]);
+  const shuffledPresent = shuffle([...presentSpots]);
+
+  // Assign Items to the first available spots after shuffle
+  const itemAssignments = {
+    // Past Items
+    [shuffledPast[0]]: "crystal",
+    [shuffledPast[1]]: "bow",
+    // Present Item
+    [shuffledPresent[0]]: "cloak",
+  };
+
   const newUserData = {
     uid: uid,
     username: username,
     email: email,
     createdAt: serverTimestamp(),
-    currentTimer: 0,
-    currentPage: "present.html",
+    startTime: Date.now(),
+    gameEnded: false,
+    introSeen: false,
     numOfHops: 2,
     machineFixed: false,
     dialogueHistory: [],
+    currentPage: "present.html", // Default start
+
+    // Store the random locations
+    itemAssignments: itemAssignments,
+
     inventory: {
       hasHarmonyCrystal: false,
       hasCloak: false,
       hasBow: false,
       hasPicture: false,
     },
-    itemCoords: {
-      powerCrystal: null,
-      cloak: null,
-      bow: null,
-    },
+    // Track if a spot has been searched/revealed
     hidingSpots: {
-      presentRightServerRevealed: false,
-      presentLeftBoxRevealed: false,
-      pastCenterPotRevealed: false,
-      pastCenterStoneRevealed: false,
-      pastRightCrateRevealed: false,
-      pastRightStoneRevealed: false,
-      pastLeftFloorRevealed: false,
-      pastLeftUrnRevealed: false,
+      crystalSpot: false,
+      bowSpot: false,
+      crateSpot: false,
+      stoneSpot: false,
+      urnSpot: false,
+      floorSpot: false,
+      boxSpot: false,
+      serverSpot: false,
     },
-    nextNode: "start",
   };
 
   try {
@@ -62,68 +94,51 @@ export async function loadUserData(uid) {
   try {
     const userDocRef = doc(db, "users", uid);
     const docSnap = await getDoc(userDocRef);
-
-    if (docSnap.exists()) {
-      return docSnap.data();
-    }
+    if (docSnap.exists()) return docSnap.data();
     return null;
   } catch (error) {
-    console.error("Error loading user data");
+    console.error("Error loading user data", error);
     return null;
   }
 }
 
 export async function saveUserProgress(uid, progressData) {
-  if (!uid) {
-    console.warn("no user ID provided");
-    return;
-  }
-
+  if (!uid) return;
   try {
     const userDocRef = doc(db, "users", uid);
-    // Ok ok, this is goated: update doc merges data without overwriting the whole doc gg
     await updateDoc(userDocRef, progressData);
   } catch (error) {
     console.error("Error saving user progress:", error);
   }
 }
 
-// Score is for leaderboard btw [neutral, good, bad, and maybe more endings depending on what suspiciousBread says?]
-// UPDATE, only one leaderboard lol
-export async function submitScore(uid, username, endTime) {
+export async function submitScore(uid, username, startTime) {
   try {
+    const duration = (Date.now() - startTime) / 1000;
     const leaderboardCollection = collection(db, "leaderboard");
-
     await addDoc(leaderboardCollection, {
       uid: uid,
       username: username,
-      endTime: endTime,
-      createdAt: serverTimestamp(),
+      duration: duration,
+      submittedAt: serverTimestamp(),
     });
   } catch (error) {
-    alert("Failed to submit score");
+    console.error("Failed to submit score", error);
   }
 }
 
-// Get top 5 leaderboard
 export async function getLeaderboard() {
-  const scores = [];
   try {
     const q = query(
       collection(db, "leaderboard"),
-      orderBy("endTime", "asc"), // ascending duh
+      orderBy("duration", "asc"),
       limit(5)
     );
-
     const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach((doc) => {
-      scores.push(doc.data());
-    });
-
+    const scores = [];
+    querySnapshot.forEach((doc) => scores.push(doc.data()));
     return scores;
   } catch (error) {
-    console.error("Error getting leaderboard");
     return [];
   }
 }
