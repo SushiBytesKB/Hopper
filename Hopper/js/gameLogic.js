@@ -19,14 +19,14 @@ export function setState(newState) {
 export const itemDefinitions = {
   crystal: {
     id: "crystal",
-    path: "../assets/images/pastAssets/Harmony_Crystal.png",
+    path: "assets/images/pastAssets/Harmony_Crystal.png",
     successMessage:
       "Gremlin: Congratulations!! You picked up the Energy Crystal",
     stateKey: "hasPowerCrystal",
   },
   bow: {
     id: "bow",
-    path: "../assets/images/pastAssets/Ancient_Recurve_Bow.png",
+    path: "assets/images/pastAssets/Ancient_Recurve_Bow.png",
     successMessage: "Gremlin: Congratulations!! You picked up the Ancient Bow",
     stateKey: "hasBow",
   },
