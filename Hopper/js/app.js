@@ -18,7 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       console.log("User is signed out.");
       // Start anonymous play logic if not on index
-      if (!window.location.pathname.endsWith("index.html")) {
+      if (
+        !window.location.pathname.endsWith("index.html") &&
+        !window.location.pathname.endsWith("/")
+      ) {
         uiService.updateInventoryUI([]);
       }
     }
@@ -119,28 +122,22 @@ function attachUIListeners() {
     });
   }
 
-  // Popup (Signup)
-  const closeSignupBtn = document.getElementById("closeSignup");
-  if (closeSignupBtn) {
-    closeSignupBtn.addEventListener("click", () => {
-      uiService.closePopup("popupSignup");
-      handleAnonymousPlay();
-    });
-  }
-
-  const switchToLoginBtn = document.getElementById("switchToLogin");
-  if (switchToLoginBtn) {
-    switchToLoginBtn.addEventListener("click", () => {
+  // Switch to login
+  const goToLoginBtn = document.getElementById("goToLogin");
+  if (goToLoginBtn) {
+    goToLoginBtn.addEventListener("click", (e) => {
+      e.preventDefault();
       uiService.closePopup("popupSignup");
       uiService.openPopup("popupLogin");
     });
   }
 
-  // Popup (Login)
-  const closeLoginBtn = document.getElementById("closeLogin");
-  if (closeLoginBtn) {
-    closeLoginBtn.addEventListener("click", () => {
-      uiService.closePopup("popupLogin");
+  // Play as Guest
+  const guestSignupBtn = document.getElementById("guestSignup");
+  if (guestSignupBtn) {
+    guestSignupBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      uiService.closePopup("popupSignup");
       handleAnonymousPlay();
     });
   }
@@ -162,6 +159,27 @@ function attachUIListeners() {
     });
   }
 
+  // Switch to Signup
+  const goToSignupBtn = document.getElementById("goToSignup");
+  if (goToSignupBtn) {
+    goToSignupBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      uiService.closePopup("popupLogin");
+      uiService.openPopup("popupSignup");
+    });
+  }
+
+  // Play as Guest
+  const guestLoginBtn = document.getElementById("guestLogin");
+  if (guestLoginBtn) {
+    guestLoginBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      uiService.closePopup("popupLogin");
+      handleAnonymousPlay();
+    });
+  }
+
+  // Login Form Submit
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -222,7 +240,14 @@ function setupGameInteractions() {
     });
   }
 
-  // Gremlin Hint Click??
+  // Gremlin Hint Click
+  const gremlin = document.getElementById("gremlin");
+  if (gremlin) {
+    gremlin.addEventListener("click", () => {
+      const hint = gameLogic.getGremlinHint(window.location.pathname);
+      uiService.typeNewDialogueLine(hint);
+    });
+  }
 }
 
 async function handleAnonymousPlay() {
