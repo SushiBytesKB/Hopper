@@ -16,37 +16,7 @@ import {
 export async function createUser(uid, username, email) {
   const userDocRef = doc(db, "users", uid);
 
-  // --- ITEM RANDOMIZATION LOGIC ---
-  const pastSpots = [
-    "crystalSpot",
-    "bowSpot",
-    "crateSpot",
-    "stoneSpot",
-    "floorSpot",
-    "urnSpot",
-  ];
-  const presentSpots = ["boxSpot", "serverSpot"];
-
-  // Shuffle Helper
-  const shuffle = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  };
-
-  const shuffledPast = shuffle([...pastSpots]);
-  const shuffledPresent = shuffle([...presentSpots]);
-
-  // Assign Items to the first available spots after shuffle
-  const itemAssignments = {
-    // Past Items
-    [shuffledPast[0]]: "crystal",
-    [shuffledPast[1]]: "bow",
-    // Present Item
-    [shuffledPresent[0]]: "cloak",
-  };
+  const { itemAssignments } = generateRandomSpots();
 
   const newUserData = {
     uid: uid,
@@ -56,8 +26,6 @@ export async function createUser(uid, username, email) {
     startTime: Date.now(),
     gameEnded: false,
     introSeen: false,
-    numOfHops: 2,
-    machineFixed: false,
     dialogueHistory: [],
     currentPage: "present.html", // Default start
 
@@ -88,6 +56,78 @@ export async function createUser(uid, username, email) {
   } catch (error) {
     console.error("Error creating user profile:", error);
   }
+}
+
+// reset game
+export async function resetUserGame(uid) {
+  const userDocRef = doc(db, "users", uid);
+
+  const { itemAssignments } = generateRandomSpots();
+
+  const resetData = {
+    startTime: Date.now(),
+    gameEnded: false,
+    introSeen: false, // Reset intro
+    dialogueHistory: [],
+    currentPage: "present.html",
+    itemAssignments: itemAssignments,
+
+    inventory: {
+      hasHarmonyCrystal: false,
+      hasCloak: false,
+      hasBow: false,
+      hasPicture: false,
+    },
+
+    hidingSpots: {
+      crystalSpot: false,
+      bowSpot: false,
+      crateSpot: false,
+      stoneSpot: false,
+      urnSpot: false,
+      floorSpot: false,
+      boxSpot: false,
+      serverSpot: false,
+    },
+  };
+
+  try {
+    await updateDoc(userDocRef, resetData);
+  } catch (error) {
+    console.error("Error resetting game:", error);
+  }
+}
+
+// Helper for randomization
+function generateRandomSpots() {
+  const pastSpots = [
+    "crystalSpot",
+    "bowSpot",
+    "crateSpot",
+    "stoneSpot",
+    "floorSpot",
+    "urnSpot",
+  ];
+  const presentSpots = ["boxSpot", "serverSpot"];
+
+  const shuffle = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
+  const shuffledPast = shuffle([...pastSpots]);
+  const shuffledPresent = shuffle([...presentSpots]);
+
+  return {
+    itemAssignments: {
+      [shuffledPast[0]]: "crystal",
+      [shuffledPast[1]]: "bow",
+      [shuffledPresent[0]]: "cloak",
+    },
+  };
 }
 
 export async function loadUserData(uid) {
