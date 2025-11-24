@@ -27,6 +27,9 @@
                     <img src="assets/images/futureAssets/destructiveRobot.png" alt="Destructive Robot">
                 </div>
             </div>
+            <div id="hopperDeviceFixed" class="hopper-device-fixed hidden">
+                <img src="assets/images/presentAssets/Hopper_Device_Fixed.png" alt="Hopper Device Fixed">
+            </div>
             <p class="hidden"><em>"Subject identified. Temporal anomaly. Designation: Pest."</em></p>
             
             <div class="choices hidden">
@@ -91,6 +94,11 @@
 
     <script>
         let hasCrystal = false;
+        let hasCloak = localStorage.getItem('hopper_has_cloak') === '1';
+        let hasPhoto = localStorage.getItem('hopper_has_photo') === '1';
+        let deviceFixed = localStorage.getItem('hopper_device_fixed') === '0';
+        let timerId = null;
+        let remaining = 0;
 
         const choiceText = {
             reason: 'You try to reason with the AI: "We come in peace!"',
@@ -110,12 +118,23 @@
             list.scrollTop = list.scrollHeight;
         }
 
-        function appendInventory(name) {
+        function appendInventory(name, imgSrc) {
             const inv = document.getElementById('inventoryList');
             if (!inv) return;
             const item = document.createElement('div');
             item.className = 'inventory-entry';
-            item.textContent = name;
+            if (imgSrc) {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.alt = name;
+                img.style.width = '48px';
+                img.style.height = '48px';
+                img.style.marginRight = '8px';
+                item.appendChild(img);
+            }
+            const label = document.createElement('span');
+            label.textContent = name;
+            item.appendChild(label);
             inv.appendChild(item);
         }
 
@@ -202,20 +221,112 @@
             window.location.href = '/index.html';
         }
 
-        function acquireCrystal() {
-            if (hasCrystal) return;
-            hasCrystal = true;
-            const crystalBtn = document.getElementById('crystalOption');
-            if (crystalBtn) {
-                crystalBtn.className = 'choice-btn';
-                crystalBtn.innerHTML = '> Use the Chrono-Crystal to disrupt the AI\'s temporal sensors.';
-            }
-            appendDialogue('system', 'You acquired the Chrono-Crystal.');
-            appendInventory('Chrono-Crystal');
+        function goToPresent() {
+            window.location.href = 'present.html';
+        }
 
-            const leftCrystal = document.querySelector('.dialogue-option[data-key="crystal"]');
-            if (leftCrystal) {
-                leftCrystal.classList.remove('locked');
+        function startEncounter() {
+            if (hasPhoto) {
+                appendDialogue('system', 'You already captured evidence of the Future.');
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = 'dialogue-entry options-list';
+                const header = document.createElement('div');
+                header.style.fontWeight = '700';
+                header.style.marginBottom = '6px';
+                header.textContent = 'Next:';
+                optionsWrapper.appendChild(header);
+                const opt = document.createElement('div');
+                opt.className = 'dialogue-option';
+                opt.textContent = 'Return to the Present';
+                opt.addEventListener('click', function() { goToPresent(); });
+                optionsWrapper.appendChild(opt);
+                const list = document.getElementById('dialogueList');
+                if (list) {
+                    list.appendChild(optionsWrapper);
+                    list.scrollTop = list.scrollHeight;
+                }
+                return;
+            }
+
+            if (hasCloak) {
+                appendDialogue('system', 'Your stealth cloak dampens your signature. You have a brief window to act.');
+                remaining = 10;
+                renderTimer();
+                timerId = setInterval(function() {
+                    remaining -= 1;
+                    renderTimer();
+                    if (remaining <= 0) {
+                        clearInterval(timerId);
+                        showGameOver();
+                    }
+                }, 1000);
+
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = 'dialogue-entry options-list';
+                const header = document.createElement('div');
+                header.style.fontWeight = '700';
+                header.style.marginBottom = '6px';
+                header.textContent = 'Actions:';
+                optionsWrapper.appendChild(header);
+                const photoOpt = document.createElement('div');
+                photoOpt.className = 'dialogue-option';
+                photoOpt.textContent = 'Take a photo of the Future';
+                photoOpt.addEventListener('click', function() { takePhoto(); });
+                optionsWrapper.appendChild(photoOpt);
+                const list = document.getElementById('dialogueList');
+                if (list) {
+                    list.appendChild(optionsWrapper);
+                    list.scrollTop = list.scrollHeight;
+                }
+            } else {
+                appendDialogue('system', 'The robot detects you immediately.');
+                showGameOver();
+            }
+        }
+
+        function renderTimer() {
+            const list = document.getElementById('dialogueList');
+            if (!list) return;
+            let timerEntry = document.getElementById('cloak-timer');
+            const text = 'Cloak time remaining: ' + remaining + 's';
+            if (!timerEntry) {
+                timerEntry = document.createElement('div');
+                timerEntry.id = 'cloak-timer';
+                timerEntry.className = 'dialogue-entry system-entry';
+                timerEntry.innerHTML = `<div>${text}</div>`;
+                list.appendChild(timerEntry);
+            } else {
+                timerEntry.innerHTML = `<div>${text}</div>`;
+            }
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function takePhoto() {
+            if (timerId) {
+                clearInterval(timerId);
+                timerId = null;
+            }
+            appendDialogue('system', 'You capture a clear photo of the devastated lab.');
+            localStorage.setItem('hopper_has_photo', '1');
+            hasPhoto = true;
+            appendInventory('Photo of the Future', 'assets/images/futureAssets/Photo_of_the_Destructive_Future.png');
+
+            const optionsWrapper = document.createElement('div');
+            optionsWrapper.className = 'dialogue-entry options-list';
+            const header = document.createElement('div');
+            header.style.fontWeight = '700';
+            header.style.marginBottom = '6px';
+            header.textContent = 'Next:';
+            optionsWrapper.appendChild(header);
+            const opt = document.createElement('div');
+            opt.className = 'dialogue-option';
+            opt.textContent = 'Return to the Present';
+            opt.addEventListener('click', function() { goToPresent(); });
+            optionsWrapper.appendChild(opt);
+            const list = document.getElementById('dialogueList');
+            if (list) {
+                list.appendChild(optionsWrapper);
+                list.scrollTop = list.scrollHeight;
             }
         }
 
@@ -223,61 +334,64 @@
             if (event.key === '1') {
                 acquireCrystal();
             }
+            if (event.key === '2') {
+                acquireCloak();
+            }
+            if (event.key === '3') {
+                acquireDeviceFixed();
+            }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             const scene1 = document.getElementById('scene1');
             const dialogueList = document.getElementById('dialogueList');
             if (!scene1 || !dialogueList) return;
-
-            // populate initial scene paragraphs into dialogue history
             const paras = scene1.querySelectorAll('p');
             paras.forEach(p => {
                 const text = p.innerText.trim();
                 if (text) appendDialogue('system', text);
             });
-
-            // mirror the options into the dialogue history as clickable entries
-            const choices = scene1.querySelectorAll('.choices .choice-btn, .choices .locked-choice');
-            if (choices.length) {
-                const optionsWrapper = document.createElement('div');
-                optionsWrapper.className = 'dialogue-entry options-list';
-                const header = document.createElement('div');
-                header.style.fontWeight = '700';
-                header.style.marginBottom = '6px';
-                header.textContent = 'Options:';
-                optionsWrapper.appendChild(header);
-
-                choices.forEach((btn, idx) => {
-                    // try to extract the choice key from the onclick attribute
-                    let onclick = btn.getAttribute('onclick') || '';
-                    let match = onclick.match(/chooseOption\(['\"](.*?)['\"]\)/);
-                    let key = match ? match[1] : ('option' + idx);
-
-                    const opt = document.createElement('div');
-                    opt.className = 'dialogue-option';
-                    opt.dataset.key = key;
-                    opt.textContent = (btn.textContent || btn.innerText).trim();
-                    // indicate locked state visually
-                    if (btn.classList.contains('locked-choice')) {
-                        opt.classList.add('locked');
-                    }
-                    opt.addEventListener('click', function() {
-                        // if locked, give feedback
-                        if (btn.classList.contains('locked-choice') && !hasCrystal) {
-                            appendDialogue('system', "That option is locked. You need the Chrono-Crystal.");
-                            alert("You don't have the Chrono-Crystal! You must find the crystal to select this option.");
-                            return;
-                        }
-                        chooseOption(key);
-                    });
-                    optionsWrapper.appendChild(opt);
-                });
-
-                dialogueList.appendChild(optionsWrapper);
-                dialogueList.scrollTop = dialogueList.scrollHeight;
-            }
+            startEncounter();
+            renderDeviceFixed();
         });
+
+        function acquireCrystal() {
+            if (hasCrystal) return;
+            hasCrystal = true;
+            appendDialogue('system', 'You acquired the Chrono-Crystal.');
+            appendInventory('Chrono-Crystal', 'assets/images/pastAssets/Harmony_Crystal.png');
+        }
+
+        function acquireCloak() {
+            if (hasCloak) return;
+            hasCloak = true;
+            localStorage.setItem('hopper_has_cloak', '1');
+            appendDialogue('system', 'You put on the High-Tech Stealth Cloak.');
+            appendInventory('High-Tech Stealth Cloak', 'assets/images/presentAssets/High-Tech_Stealth_Cloak.png');
+            if (timerId) {
+                clearInterval(timerId);
+                timerId = null;
+            }
+            const t = document.getElementById('cloak-timer');
+            if (t) t.remove();
+            startEncounter();
+        }
+
+        function renderDeviceFixed() {
+            const node = document.getElementById('hopperDeviceFixed');
+            if (node) {
+                if (deviceFixed) node.classList.remove('hidden');
+                else node.classList.add('hidden');
+            }
+        }
+
+        function acquireDeviceFixed() {
+            if (deviceFixed) return;
+            deviceFixed = true;
+            localStorage.setItem('hopper_device_fixed', '1');
+            appendDialogue('system', 'The Hopper device stabilizes and hums with restored power.');
+            renderDeviceFixed();
+        }
     </script>
 </body>
 </html>

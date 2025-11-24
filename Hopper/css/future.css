@@ -128,18 +128,32 @@ body.future {
 
 .robot-image {
   flex-shrink: 0;
-  max-width: 500px;
+  max-width: 400px;
   height: auto;
   position: absolute;
-  bottom: -5px;
-  left: 50%;
+  bottom: -10px;
+  left: 20%;
   transform: translateX(-50%);
 }
 
 .robot-image img {
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 0 10px #00ff00);
+  filter: drop-shadow(0 0 10px #ff0000);
+}
+
+.hopper-device-fixed {
+  position: absolute;
+  left: 66%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: clamp(280px, 32vw, 520px);
+  pointer-events: none;
+}
+.hopper-device-fixed img {
+  width: 50%;
+  height: auto;
+  /*filter: drop-shadow(0 0 12px #00ffcc);*/
 }
 
 .scene-text {
