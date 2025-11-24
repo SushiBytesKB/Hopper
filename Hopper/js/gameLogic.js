@@ -114,7 +114,7 @@ export const decisionPoints = {
     ],
   },
   pastHub: {
-    text: "You look around and find yourself in an ancient Temple. The Hopper machine stands behind you, looking the same as before: a gaping dark hole in its center. You have to find the Harmony Crystal...",
+    text: "Good luck travellar...",
     options: [
       {
         button: "Return to Present",
