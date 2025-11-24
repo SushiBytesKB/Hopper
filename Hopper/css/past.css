@@ -37,7 +37,7 @@ body.past {
   margin: 0;
   border-bottom: 2px solid #efa37f;
   text-align: center;
-  font-size: 2rem;
+  font-size: 3vh;
   font-family: "Minecraft", sans-serif;
 }
 
@@ -47,12 +47,12 @@ body.past {
   overflow-y: auto;
   color: #fff;
   background-color: rgba(0, 0, 0, 0.6);
-  font-size: 1.5rem;
+  font-size: 2vh;
   font-family: "Minecraft", sans-serif;
-  line-height: 1.4;
+  line-height: 1.5;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  gap: 10px; 
 }
 
 .playerField,
@@ -96,7 +96,7 @@ body.past {
   margin: 0;
   border-bottom: 2px solid #efa37f;
   text-align: center;
-  font-size: 2rem;
+  font-size: 3vh;
   font-family: "Minecraft", sans-serif;
 }
 
@@ -127,15 +127,15 @@ body.past {
   object-fit: contain;
 }
 #slot1 {
-  top: 13%;
+  top: 12.6%;
   left: 10%;
 }
 #slot2 {
-  top: 13%;
+  top: 12.6%;
   left: 69.5%;
 }
 #slot3 {
-  top: 28.5%;
+  top: 30.5%;
   left: 40%;
 }
 #slot4 {
