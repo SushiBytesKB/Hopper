@@ -53,6 +53,15 @@ export const itemDefinitions = {
     dbKey: "inventory.hasCloak",
   },
   // Add pic of future later
+  picture: {
+    id: "picture",
+    path: "assets/images/futureAssets/Photo_of_the_Destructive_Future.png",
+    revealedImage:
+      "assets/images/futureAssets/Photo_of_the_Destructive_Future.png",
+    successMessage: "Destructive Robot: ALERT! Unusual activity detected!",
+    stateKey: "hasPicture",
+    dbKey: "inventory.hasPicture",
+  },
 };
 
 export function getGremlinHint(currentPage) {
@@ -101,7 +110,7 @@ export const decisionPoints = {
       },
       // Condition
       {
-        button: "Check Status",
+        button: "Talk to Professor",
         text: "Analyzing Timeline...",
         next: "checkPresent",
       },
