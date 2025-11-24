@@ -137,6 +137,8 @@ function setupGameInteractions() {
     machine.parentNode.replaceChild(newMachine, machine);
 
     newMachine.addEventListener("click", () => {
+      if (gameLogic.getState().gameEnded) return;
+
       const pageKey = gameLogic.getNodeForPage(window.location.pathname);
       const node = gameLogic.decisionPoints[pageKey];
       if (node) {
@@ -300,19 +302,24 @@ async function processNode(node) {
     handleItemPickup(node.grantItem, null);
   }
 
-  if (node.isEnding && currentUser && !gameLogic.getState().gameEnded) {
-    await dataService.saveUserProgress(currentUser.uid, { gameEnded: true });
+  if (node.isEnding) {
+    // if user logged in and game hasn't ended yet
+    if (currentUser && !gameLogic.getState().gameEnded) {
+      await dataService.saveUserProgress(currentUser.uid, { gameEnded: true });
 
-    // Use currentUserName for leaderboard
-    await dataService.submitScore(
-      currentUser.uid,
-      currentUserName,
-      gameLogic.getState().startTime
-    );
+      await dataService.submitScore(
+        currentUser.uid,
+        currentUserName,
+        gameLogic.getState().startTime
+      );
 
-    handleDialogueUpdate("SCORE SUBMITTED! Check Leaderboard.");
-    const scores = await dataService.getLeaderboard();
-    uiService.showLeaderboard(scores);
+      handleDialogueUpdate("SCORE SUBMITTED! Check Leaderboard.");
+      const scores = await dataService.getLeaderboard();
+      uiService.showLeaderboard(scores);
+    }
+
+    // update local state immediately so the machine click is disabled
+    gameLogic.setState({ gameEnded: true });
   }
 
   // Game over uses the same shared leaderboard popup via isEnding branch
