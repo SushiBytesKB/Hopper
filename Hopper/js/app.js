@@ -274,6 +274,11 @@ function handleOptionClick(option) {
     return;
   }
 
+  if (option.next === "startPhotoTimer") {
+    startPhotoTimer();
+    return;
+  }
+
   if (option.next.includes(".html")) {
     window.location.href = option.next;
     return;
@@ -317,7 +322,28 @@ async function processNode(node) {
     gameLogic.setState({ gameEnded: true });
   }
 
+  // Game over uses the same shared leaderboard popup via isEnding branch
+
   if (node.options) uiService.renderOptions(node.options, handleOptionClick);
+}
+
+function startPhotoTimer() {
+  let remaining = 10;
+  handleDialogueUpdate("Timer started: 10s");
+  const intervalId = setInterval(() => {
+    remaining -= 1;
+    if (remaining > 0) {
+      handleDialogueUpdate(`Time left: ${remaining}s`);
+    } else {
+      clearInterval(intervalId);
+      handleItemPickup("picture", null);
+      handleDialogueUpdate("Photo captured. Escape to the Present.");
+      uiService.renderOptions(
+        [{ button: "Return to Present", text: "Run!", next: "present.html" }],
+        handleOptionClick
+      );
+    }
+  }, 1000);
 }
 
 function attachUIListeners() {

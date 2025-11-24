@@ -136,3 +136,6 @@ export function showLeaderboard(scores) {
   list.innerHTML = html;
   popup.style.display = "flex";
 }
+
+// Game Over Popup
+// intentionally using the shared leaderboard-only flow for endings

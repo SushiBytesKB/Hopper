@@ -28,30 +28,37 @@ body.present {
   flex-direction: column;
 }
 
-.dialogueHistory h3 {
-  background-color: #4b0082;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 3vh;
-  border-bottom: 2px solid #7b1fa2;
-  font-family: "Minecraft", sans-serif;
+.playerField {
+  background-image: url(../assets/images/presentAssets/labCenter.png);
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  width: 50%;
+  height: 100vh;
+  display: inline-block;
+  position: relative;
 }
 
-.dialogueContent {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  font-size: 2vh;
-  line-height: 1.5;
-  font-family: "Minecraft", sans-serif;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.playerFieldLeft {
+  background-image: url(../assets/images/presentAssets/leftRoom/labLeft.png);
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  width: 50%;
+  height: 100vh;
+  display: inline-block;
+  position: relative;
 }
 
-.dialogueContent p {
-  margin: 0;
+.playerFieldRight {
+  background-image: url(../assets/images/presentAssets/rightRoom/labRight.png);
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  width: 50%;
+  height: 100vh;
+  display: inline-block;
+  position: relative;
 }
 
 .inventory {
@@ -302,4 +309,35 @@ img.Professor {
 }
 .closeLeaderboard:hover {
   background: white;
+}
+
+img.Hopper_Device_Broken
+{
+  height: 50%;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+img.Professor
+{
+  height: 40%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.machine
+{
+  position: absolute;
+  width: 80px;
+  height: 100px;
+}
+
+.professor
+{
+  position: absolute;
+  width: 80px;
+  height: 100px;
+  margin-left: 100px;
 }
