@@ -58,6 +58,35 @@ body.future {
   overflow-y: auto;
 }
 
+/* Inventory slots layout */
+#inventorySlots {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* Slot box and image sizing */
+.slot {
+  width: 70px;
+  height: 70px;
+  min-width: 70px;
+  min-height: 70px;
+  border: 2px solid #00ff66;
+  background: #000;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.slot img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
 /* dialogue and inventory entry styling */
 .dialogueHistory .dialogue-entry,
 .inventory .inventory-entry {
@@ -156,6 +185,18 @@ body.future {
   /*filter: drop-shadow(0 0 12px #00ffcc);*/
 }
 
+.machine {
+  position: absolute;
+  width: 18%;
+  height: 38%;
+  left: 40%;
+  top: 22%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 5;
+}
+
 .scene-text {
   flex: 1;
 }
@@ -235,3 +276,74 @@ body.future {
   background-color: #003333;
   border-radius: 12px;
 }
+
+#optionsContainer {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+}
+.btnDecisionOptions {
+  padding: 15px 30px;
+  background-color: #1a1a1a;
+  color: #00ff99;
+  border: 2px solid #00ff99;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+/* leaderboard styles for future page */
+.popupLeaderboard {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 5000;
+  justify-content: center;
+  align-items: center;
+}
+.leaderboardContent {
+  background: #2d1455;
+  border: 4px solid #ffc107;
+  padding: 30px;
+  border-radius: 15px;
+  width: 50%;
+  max-width: 600px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 20px #ffc107;
+}
+.leaderboardList { 
+  text-align: left;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 8px;
+}
+.leaderboardEntry {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 2vh;
+}
+.closeLeaderboard {
+  background: #ffc107;
+  color: black;
+  border: none;
+  padding: 10px 30px;
+  font-size: 2vh;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  border-radius: 8px;
+}
+.closeLeaderboard:hover { background: white; }

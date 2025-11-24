@@ -149,12 +149,16 @@ export const decisionPoints = {
   // Logic nodes
   checkFuture: {
     condition: (state) => {
-      // If no cloak, dead. If cloak, success.
-      return state.hasCloak ? "futureCloak" : "terribleF";
+      if (!state.hasCloak && !state.hasPowerCrystal) return "noItems";
+      if (!state.hasCloak && state.hasPowerCrystal) return "crystalOnly";
+      if (state.hasCloak && state.hasPowerCrystal) return "cloakAndCrystal";
+      return "cloakOnly";
     },
     results: {
-      terribleF: "futureTerrible",
-      futureCloak: "futureWithCloak",
+      noItems: "futureGameOverNoItems",
+      crystalOnly: "futureBadNoCloakHasCrystal",
+      cloakAndCrystal: "futureCloakWithCrystal",
+      cloakOnly: "futureTerrible",
     },
   },
 
@@ -175,12 +179,28 @@ export const decisionPoints = {
     },
   },
 
-  futureWithCloak: {
-    text: "You peek out beneath you Cloak of Invisibility and to your surprise, the Cyborgs actually look right through you as if you were not there. This buys you enough time to grab your trusty camera and snap a quick picture of the disaster.",
-    grantItem: "picture",
+  futureCloakWithCrystal: {
+    text: "Your stealth cloak dampens your signature. The crystal stabilizes your temporal footprint. You have a brief window to capture evidence.",
     options: [
-      // pic logic
-      { button: "Escape to Present", text: "Run!", next: "present.html" },
+      { button: "Start photo capture", text: "Initiating...", next: "startPhotoTimer" },
+    ],
+  },
+
+  futureGameOverNoItems: {
+    isGameOver: true,
+    isEnding: true,
+    text: "GAME OVER: You entered the Future with no cloak and no crystal. The robots detect you instantly.",
+    options: [
+      { button: "Play Again", text: "Playing again...", next: "restart" },
+    ],
+  },
+
+  futureBadNoCloakHasCrystal: {
+    isGameOver: true,
+    isEnding: true,
+    text: "BAD ENDING: You carry the crystal, but without a cloak you are spotted and eliminated.",
+    options: [
+      { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
   },
 
@@ -225,8 +245,9 @@ export const decisionPoints = {
   },
 
   futureTerrible: {
+    isGameOver: true,
     isEnding: true,
-    text: "GAME OVER: You moron went to the Future well knowing that you had only one Hop left. The Cyborg shot you the second you stepped foot into this timeline as you had neither escape nor defense. The robots detected you immediately.",
+    text: "GAME OVER: You went to the Future without protection. The robots detect you immediately.",
     options: [
       { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
