@@ -7,7 +7,7 @@ import * as gameLogic from "./gameLogic.js";
 
 let currentUser = null;
 let currentUserName = "Traveler";
-
+//test
 document.addEventListener("DOMContentLoaded", () => {
   attachUIListeners();
 

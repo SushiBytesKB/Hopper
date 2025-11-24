@@ -28,6 +28,32 @@ body.present {
   flex-direction: column;
 }
 
+.dialogueHistory h3 {
+  background-color: #4b0082;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 3vh;
+  border-bottom: 2px solid #7b1fa2;
+  font-family: "Minecraft", sans-serif;
+}
+
+.dialogueContent {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  font-size: 2vh;
+  font-family: "Minecraft", sans-serif;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dialogueContent p {
+  margin-bottom: 0;
+}
+
 .playerField {
   background-image: url(../assets/images/presentAssets/labCenter.png);
   background-size: cover;
@@ -309,35 +335,4 @@ img.Professor {
 }
 .closeLeaderboard:hover {
   background: white;
-}
-
-img.Hopper_Device_Broken
-{
-  height: 50%;
-  margin-left: auto;
-  margin-right: auto;
-
-}
-
-img.Professor
-{
-  height: 40%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
-
-.machine
-{
-  position: absolute;
-  width: 80px;
-  height: 100px;
-}
-
-.professor
-{
-  position: absolute;
-  width: 80px;
-  height: 100px;
-  margin-left: 100px;
 }
