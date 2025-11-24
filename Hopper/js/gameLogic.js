@@ -152,6 +152,7 @@ export const decisionPoints = {
       if (!state.hasCloak && !state.hasPowerCrystal) return "noItems";
       if (!state.hasCloak && state.hasPowerCrystal) return "crystalOnly";
       if (state.hasCloak && state.hasPowerCrystal) return "cloakAndCrystal";
+      if (state.hasCloak && !state.hasPowerCrystal) return "cloakOnly"
       return "cloakOnly";
     },
     results: {
@@ -247,7 +248,7 @@ export const decisionPoints = {
   futureTerrible: {
     isGameOver: true,
     isEnding: true,
-    text: "GAME OVER: You went to the Future without protection. The robots detect you immediately.",
+    text: "GAME OVER: You went to the Future without reparing the machine with the crystal. You are now trapped, and the destructive robots detect and eliminate you instantly.",
     options: [
       { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
