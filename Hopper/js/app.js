@@ -1,247 +1,390 @@
-let playerState = {};
+import { auth } from "./firebaseInit.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import * as authService from "./authService.js";
+import * as dataService from "./dataService.js";
+import * as uiService from "./uiService.js";
+import * as gameLogic from "./gameLogic.js";
 
-const dialogueHistoryElement = document.getElementById("dialogueHistory");
-const optionsContainerElement = document.getElementById("optionsContainer");
+let currentUser = null;
+let currentUserName = "Traveler";
 
-var nextNode = "start";
+document.addEventListener("DOMContentLoaded", () => {
+  attachUIListeners();
 
-// stores the state of the player so we can neatly pass it to the function no matter how many states we will have
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+      console.log("User signed in:", user.uid);
+      await loadGameForUser(user.uid);
+    } else {
+      console.log("Guest/No User");
+    }
+  });
+});
 
-playerState = {
-  hasPowerCrystal: true,
-  hasCloak: false,
-  hasBow: true,
-  hasPicture: false,
-  numOfHops: 0,
-};
+async function loadGameForUser(uid) {
+  const userData = await dataService.loadUserData(uid);
 
-const decisionPoints = {
-  start: {
-    text: "Welcome to the lab my dear friend I have been waiting for you\n", // add full conversation
-    options: [
-      {
-        button: "to the Future",
-        text: "You enter the Hopper machine and travel to the Future...\n",
-        next: "checkFuture",
-      },
-      {
-        button: "to the Past",
-        text: "You enter the Hopper machine and traverse multiple Timelines to go to the past\n",
-        next: "pastFromStart",
-      },
-    ],
-  },
+  if (userData) {
+    currentUserName = userData.username || "Traveler";
+    const path = window.location.pathname;
+    const pageName = path.substring(path.lastIndexOf("/") + 1) || "index.html";
 
-  pastFromStart: {
-    text: "You look around and find yourself in an ancient Temple. The Hopper machine stands behind you, looking the same as before: a gaping dark hole in its center. You have to find the Harmony Crystal...\n\n",
-    options: [
-      {
-        button: "to the Future",
-        text: "You enter the Hopper machine once again and embark on another time-travel, this time the Future lies ahead\n",
-        next: "checkFuture",
-      },
-      {
-        button: "to the Present",
-        text: "You step foot into the familiar Hopper machine and return to the present to reunite with the Professor...\n",
-        next: "presentFromPast",
-      },
-    ],
-  },
+    // If on index but have a saved game page
+    if (
+      (pageName === "index.html" || pageName === "") &&
+      userData.currentPage &&
+      userData.currentPage !== "index.html"
+    ) {
+      window.location.href = userData.currentPage;
+      return;
+    }
 
-  presentFromPast: {
-    text: "You have made it back to the Present and reunite with the professor. Are you going to talk to him or hop back to another timeline?\n\n",
-    options: [
-      {
-        button: "talk to the Professor",
-        text: "You turn towards the Professor and tap his shoulder before talking: \n",
-        next: "checkPresent",
-      },
-      {
-        button: "to the Future",
-        text: "You step foot back into the Hopper machine instead of conversing with the professor. \n",
-        next: "checkFuture",
-      },
-    ],
-  },
+    // sAve current page if different from saved.
+    if (pageName !== "index.html" && pageName !== userData.currentPage) {
+      await dataService.saveUserProgress(uid, { currentPage: pageName });
+    }
 
-  presentFromFuture: {
-    text: "You have made it back to the Present and reunite with the professor. Are you going to talk to him or hop back to another timeline?\n\n",
-    options: [
-      {
-        button: "talk to the Professor",
-        text: "You turn towards the Professor and tap his shoulder before talking: \n",
-        next: "checkPresent",
-      },
-      {
-        button: "to the Past",
-        text: "You step foot back into the Hopper machine instead of conversing with the professor.\n ",
-        next: "pastFromPresent",
-      },
-    ],
-  },
+    gameLogic.setState({
+      hasPowerCrystal: userData.inventory.hasHarmonyCrystal,
+      hasCloak: userData.inventory.hasCloak,
+      hasBow: userData.inventory.hasBow,
+      hasPicture: userData.inventory.hasPicture,
+      numOfHops: userData.numOfHops || 2,
+      hidingSpots: userData.hidingSpots || {},
+      itemAssignments: userData.itemAssignments || {},
+      startTime: userData.startTime,
+      gameEnded: userData.gameEnded,
+      inventory: [],
+      dialogueHistory: userData.dialogueHistory || [],
+    });
 
-  pastFromPresent: {
-    text: "You look around and find yourself in an ancient Temple.\n\n",
-    options: [
-      {
-        button: "to the Future",
-        text: "You enter the Hopper machine once again and embark on another time-travel, this time the Future lies ahead\n",
-        next: "checkFuture",
-      },
-      {
-        button: "to the Present",
-        text: "You step foot into the familiar Hopper machine and return to the present to reunite with the Professor...\n",
-        next: "presentFromPast",
-      },
-    ],
-  },
+    const visualInventory = [];
+    const inventoryPathState = [];
 
-  checkFuture: {
-    condition: (playerState) => {
-      if (!playerState.hasCloak) {
-        return "terribleF";
+    // Load visual inventory
+    if (userData.inventory.hasHarmonyCrystal) {
+      const path = gameLogic.itemDefinitions.crystal.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
+
+      const hopperImg = document.getElementById("hopperDevice");
+      if (hopperImg)
+        hopperImg.src = "assets/images/presentAssets/Hopper_Device_Fixed.png";
+    }
+    if (userData.inventory.hasBow) {
+      const path = gameLogic.itemDefinitions.bow.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
+    }
+    if (userData.inventory.hasCloak) {
+      const path = gameLogic.itemDefinitions.cloak.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
+    }
+    if (userData.inventory.hasPicture) {
+      const path = gameLogic.itemDefinitions.picture.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
+    }
+
+    gameLogic.setState({ inventory: inventoryPathState });
+    uiService.updateInventoryUI(visualInventory);
+
+    if (userData.dialogueHistory && userData.dialogueHistory.length > 0) {
+      uiService.renderDialogue(userData.dialogueHistory);
+    }
+
+    // Only run game interactions if we are on a game page
+    if (
+      document.querySelector(".playerField") ||
+      document.querySelector(".playerFieldLeft") ||
+      document.querySelector(".playerFieldRight")
+    ) {
+      if (!userData.introSeen) {
+        handleDialogueUpdate(
+          "Professor: Welcome to the lab my dear friend I have been waiting for you!"
+        );
+        await dataService.saveUserProgress(uid, { introSeen: true });
+      }
+      setupGameInteractions();
+    }
+  }
+}
+
+async function handleDialogueUpdate(text) {
+  uiService.typeNewDialogueLine(text);
+
+  const currentHistory = gameLogic.getState().dialogueHistory;
+  const newHistory = [...currentHistory, text];
+  gameLogic.setState({ dialogueHistory: newHistory });
+
+  if (currentUser) {
+    await dataService.saveUserProgress(currentUser.uid, {
+      dialogueHistory: newHistory,
+    });
+  }
+}
+
+function setupGameInteractions() {
+  const state = gameLogic.getState();
+
+  const machine =
+    document.getElementById("machine") ||
+    document.getElementById("hopperMachine");
+  if (machine) {
+    const newMachine = machine.cloneNode(true);
+    machine.parentNode.replaceChild(newMachine, machine);
+
+    newMachine.addEventListener("click", () => {
+      const pageKey = gameLogic.getNodeForPage(window.location.pathname);
+      const node = gameLogic.decisionPoints[pageKey];
+      if (node) {
+        // Don't re-type text if options are already open? No, machine click implies interaction.
+        processNode(node);
+      }
+    });
+  }
+
+  // rand hiding spots
+  const allSpots = [
+    "crystalSpot",
+    "bowSpot",
+    "crateSpot",
+    "stoneSpot",
+    "floorSpot",
+    "urnSpot",
+    "boxSpot",
+    "serverSpot",
+  ];
+
+  allSpots.forEach((spotId) => {
+    const el = document.getElementById(spotId);
+    if (el) {
+      const assignedItemKey = state.itemAssignments[spotId];
+
+      // If item assigned and collected, hide the spot
+      if (
+        assignedItemKey &&
+        state.inventory.includes(
+          gameLogic.itemDefinitions[assignedItemKey].path
+        )
+      ) {
+        uiService.hideElement(`#${spotId}`);
+        return;
+      }
+
+      if (state.hidingSpots[spotId]) {
+        if (assignedItemKey) {
+          // Show the item
+          el.src = gameLogic.itemDefinitions[assignedItemKey].revealedImage;
+          el.onclick = () => handleItemPickup(assignedItemKey, spotId);
+        } else {
+          // Show empty
+          el.style.opacity = "0.5";
+          el.onclick = () => handleDialogueUpdate("Just dust and echoes here.");
+        }
       } else {
-        return "futureCloak";
+        // Click to reveal
+        el.onclick = () => handleSpotReveal(spotId, assignedItemKey);
       }
-    },
-    results: {
-      terribleF: "futureTerrible",
-      futureCloak: "futureWithCloak",
-    },
-  },
+    }
+  });
 
-  checkPresent: {
-    condition: (playerState) => {
-      if (!playerState.hasPowerCrystal) {
-        return "terrible";
-      }
-      if (playerState.hasPowerCrystal) {
-        if (playerState.hasBow && !playerState.hasPicture) {
-          return "neutralBow";
-        }
+  const gremlin = document.getElementById("gremlin");
+  if (gremlin) {
+    gremlin.onclick = () => {
+      const hint = gameLogic.getGremlinHint(window.location.pathname);
+      handleDialogueUpdate(hint);
+    };
+  }
+}
 
-        if (!playerState.hasBow && playerState.hasPicture) {
-          return "neutralPicture";
-        }
+async function handleSpotReveal(spotId, assignedItemKey) {
+  const el = document.getElementById(spotId);
+  handleDialogueUpdate("You investigate...");
 
-        if (!playerState.hasBow && !playerState.hasPicture) {
-          return "badNoBowNoPicture";
-        }
+  if (assignedItemKey) {
+    // Found an item
+    el.src = gameLogic.itemDefinitions[assignedItemKey].revealedImage;
+    el.onclick = () => handleItemPickup(assignedItemKey, spotId);
+    setTimeout(() => handleDialogueUpdate("You found something useful!"), 1000);
+  } else {
+    // Found nothing
+    el.style.opacity = "0.5";
+    setTimeout(() => handleDialogueUpdate("Nothing here but dust."), 1000);
+    el.onclick = null;
+  }
 
-        if (playerState.hasBow && playerState.hasPicture) {
-          return "good";
-        }
-      }
-    },
-    results: {
-      terrible: "presentNoCrystal",
-      neutralBow: "neutralEndingHasBow",
-      neutralPicture: "neutralEndingHasPicture",
-      badNoBowNoPicture: "badEndingNoBowNoPicture",
-      good: "goodEnding",
-    },
-  },
+  const updateData = {};
+  updateData[`hidingSpots.${spotId}`] = true;
+  gameLogic.setState({
+    hidingSpots: { ...gameLogic.getState().hidingSpots, [spotId]: true },
+  });
 
-  futureWithCloak: {
-    text: "You peek out beneath you Cloak of Invisibility and to your surprise, the Cyborgs actually look right through you as if you were not there. This buys you enough time to grab your trusty camera and snap a quick picture of the disaster.\n\n",
-    options: [
-      {
-        button: "to the Present",
-        text: "You leap back into the Hopper Machine and make a run for the safe Present before your Cloak of Invisibility runs out or malfuncitons; it should not happen but better safe than sorry you think\n",
-        next: "presentFromFuture",
-      },
-    ],
-  },
+  if (currentUser) {
+    await dataService.saveUserProgress(currentUser.uid, updateData);
+  }
+}
 
-  presentNoCrystal: {
-    text: "You successfully made a useless trip to the Past and have gained nothing but experience. The Harmony Crystal is still destroyed and lost ... the Hopper machine clanks one last time before falling apart.\n\n",
-    options: [{ button: "Play again?", text: "Play again?", next: "start" }],
-  },
+async function handleItemPickup(itemId, elementId) {
+  const itemDef = gameLogic.itemDefinitions[itemId];
+  if (!itemDef) return;
 
-  neutralEndingHasBow: {
-    text: "Wait... this is... my bow? I though I would never see it ever again. My grandfather crafted it out of the Elderwood tree my ancestors planted. I saw it burn to a crisp in front of my eyes during an attack.\n\n", // add how he will change Ai a bit
-    options: [{ button: "Play again?", text: "Play again?", next: "start" }],
-  },
+  const state = gameLogic.getState();
+  if (!state.inventory.includes(itemDef.path)) {
+    const newInventory = [...state.inventory, itemDef.path];
+    const newState = { inventory: newInventory };
+    newState[itemDef.stateKey] = true;
+    gameLogic.setState(newState);
 
-  neutralEndingHasPicture: {
-    text: "Hold on let me see this ... what is going on here? Is this really what my research would do to this world? I guess I have to think it over and make some adjustments to prevent this\n\n", // add how he will change Ai a bit
-    options: [{ button: "Play again?", text: "Play again?", next: "start" }],
-  },
+    // Only hide element if it exists
+    if (elementId) {
+      uiService.hideElement(`#${elementId}`);
+    }
 
-  badEndingNoBowNoPicture: {
-    text: "Thank you so so much my dear friend! Finally, the last puzzle piece to my success in creating the strongest AI the world has ever seen. I thank you endlessly!\n\n", // maybe add more yap and lore here
-    options: [
-      { button: "Play again?", text: "Play again?", next: "start" }, // decide how to handle different endings like here the world will collapse due to the AI
-    ],
-  },
+    handleDialogueUpdate(itemDef.successMessage);
+    uiService.updateInventoryUI(newInventory);
 
-  goodEnding: {
-    text: "This is ... WHAT? My bow!! ADD BOW YAP HERE. AND my invention will destroy the future of this planet?! What am I doing? What have I done? I thank you deeply my friend ... I guess ... NO ... I KNOW that I will stop and halt everything right this moment and return to a peaceful life and maybe take little Tro with me.\n\n", // add more yap
-    options: [{ button: "Play again?", text: "Play again?", next: "start" }],
-  },
+    if (itemId === "crystal") {
+      const hopperImg = document.getElementById("hopperDevice");
+      if (hopperImg)
+        hopperImg.src = "assets/images/presentAssets/Hopper_Device_Fixed.png";
+    }
 
-  futureTerrible: {
-    text: "You moron went to the Future well knowing that you had only one Hop left. The Cyborg shot you the second you stepped foot into this timeline as you had neither escape nor defense\n\n",
-    options: [{ button: "Play again?", text: "Play again?", next: "start" }],
-  },
+    if (currentUser) {
+      const updateData = {};
+      updateData[itemDef.dbKey] = true;
+      await dataService.saveUserProgress(currentUser.uid, updateData);
+    }
+  }
+}
 
-  sample: {
-    text: "",
-    options: [{ text: "", next: "" }, {}],
-  },
-};
-
-function showNodeText(nodeID) {
-  const node = decisionPoints[nodeID];
-
-  if (node.condition) {
-    // if we reached a check node
-    const result = node.condition(playerState);
-    nextNode = node.results[result];
-    showNodeText(nextNode);
+function handleOptionClick(option) {
+  if (option.next === "restart") {
+    if (currentUser) {
+      dataService.resetUserGame(currentUser.uid).then(() => {
+        window.location.href = "present.html";
+      });
+    } else {
+      window.location.href = "index.html";
+    }
     return;
   }
 
-  const newDialogue = document.createElement("p");
-  newDialogue.innerText = node.text;
+  if (option.next.includes(".html")) {
+    window.location.href = option.next;
+    return;
+  }
 
-  dialogueHistoryElement.appendChild(newDialogue);
-
-  optionsContainerElement.innerHTML = "";
-}
-
-function showOptions(nodeID) {
-  const node = decisionPoints[nodeID];
-  optionsContainerElement.innerHTML = "";
-
-  for (const option of node.options) {
-    const button = document.createElement("button");
-    button.innerText = option.button;
-
-    button.addEventListener("click", () => {
-      if (option.next == "start") {
-        restartGame();
-      } else {
-        const travelDetails = document.createElement("p");
-        travelDetails.innerText = option.text;
-        dialogueHistoryElement.appendChild(travelDetails);
-
-        nextNode = option.next;
-
-        showNodeText(nextNode);
-      }
-    });
-    button.style.height = "100px";
-    button.style.width = "100px";
-
-    optionsContainerElement.appendChild(button);
+  const nextNode = gameLogic.decisionPoints[option.next];
+  if (nextNode.condition) {
+    const state = gameLogic.getState();
+    const resultKey = nextNode.condition(state);
+    const actualNode = gameLogic.decisionPoints[nextNode.results[resultKey]];
+    processNode(actualNode);
+  } else {
+    processNode(nextNode);
   }
 }
 
-document.getElementById("machine").addEventListener("click", function () {
-  showOptions(nextNode);
-});
+async function processNode(node) {
+  handleDialogueUpdate(node.text);
 
-document.getElementById("professor").addEventListener("click", function () {
-  showNodeText(nextNode);
-});
+  if (node.grantItem) {
+    handleItemPickup(node.grantItem, null);
+  }
+
+  if (node.isEnding && currentUser && !gameLogic.getState().gameEnded) {
+    await dataService.saveUserProgress(currentUser.uid, { gameEnded: true });
+
+    // Use currentUserName for leaderboard
+    await dataService.submitScore(
+      currentUser.uid,
+      currentUserName,
+      gameLogic.getState().startTime
+    );
+
+    handleDialogueUpdate("SCORE SUBMITTED! Check Leaderboard.");
+    const scores = await dataService.getLeaderboard();
+    uiService.showLeaderboard(scores);
+  }
+
+  if (node.options) uiService.renderOptions(node.options, handleOptionClick);
+}
+
+function attachUIListeners() {
+  const startBtn = document.getElementById("startButton");
+  if (startBtn) startBtn.onclick = () => uiService.openPopup("popupLogin");
+
+  const guestBtn = document.getElementById("guestLogin");
+  if (guestBtn) guestBtn.onclick = handleAnonymousPlay;
+
+  const guestSignupBtn = document.getElementById("guestSignup");
+  if (guestSignupBtn) guestSignupBtn.onclick = handleAnonymousPlay;
+
+  const logoutBtn = document.getElementById("logoutButton");
+  if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+      await authService.logout();
+      window.location.href = "index.html";
+    };
+  }
+
+  const closeLeaderboard = document.getElementById("closeLeaderboard");
+  if (closeLeaderboard) {
+    closeLeaderboard.onclick = () => uiService.closePopup("leaderboardPopup");
+  }
+
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      const user = await authService.login(email, password);
+      if (user) {
+        // Fetch latest user data to redirect to correct page
+        const userData = await dataService.loadUserData(user.uid);
+        window.location.href = userData?.currentPage || "present.html";
+      }
+    };
+  }
+
+  const signupForm = document.getElementById("signupForm");
+  if (signupForm) {
+    signupForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+      const username = document.getElementById("signupUsername").value;
+      const user = await authService.signUp(email, password);
+      if (user) {
+        await dataService.createUser(user.uid, username, email);
+        window.location.href = "present.html";
+      }
+    };
+  }
+
+  const goToSignup = document.getElementById("goToSignup");
+  if (goToSignup)
+    goToSignup.onclick = () => {
+      uiService.closePopup("popupLogin");
+      uiService.openPopup("popupSignup");
+    };
+
+  const goToLogin = document.getElementById("goToLogin");
+  if (goToLogin)
+    goToLogin.onclick = () => {
+      uiService.closePopup("popupSignup");
+      uiService.openPopup("popupLogin");
+    };
+}
+
+async function handleAnonymousPlay() {
+  const user = await authService.handleAnonymousLogin();
+  if (user) {
+    await dataService.createUser(user.uid, "Traveler", "anonymous");
+    window.location.href = "present.html";
+  }
+}

@@ -3,17 +3,29 @@
   padding: 0;
 }
 
+@font-face {
+  font-family: "Minecraft";
+  src: url("../assets/fonts/minecraft.ttf") format("truetype");
+}
+
 body.present {
-  background-color: gray;
+  background-color: #222;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  font-family: "Minecraft", sans-serif;
+  color: #e0e0e0;
 }
+
 .dialogueHistory {
   width: 25%;
   height: 100vh;
-
   float: left;
+  background-color: rgba(0, 0, 0, 0.85);
+  border-right: 2px solid #555;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .playerField {
@@ -53,40 +65,250 @@ body.present {
   width: 25%;
   height: 100vh;
   float: right;
+  background-color: rgba(20, 20, 20, 0.9);
+  border-left: 2px solid #555;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
+.inventory h3 {
+  background-color: #4b0082;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 3vh;
+  border-bottom: 2px solid #7b1fa2;
+  font-family: "Minecraft", sans-serif;
+}
+
+#inventorySlots {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* Constrain inventory slots */
+.slot {
+  width: 70px;
+  height: 70px;
+  min-width: 70px;
+  min-height: 70px;
+  border: 2px solid #555;
+  background: #000;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Cut off anything spilling out */
+}
+
+/* Constrain images inside slots */
+.slot img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.playerField,
+.playerFieldLeft,
+.playerFieldRight {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 50%;
+  height: 100vh;
+  position: relative;
+  float: left;
+}
+.playerField {
+  background-image: url(../assets/images/presentAssets/labCenter.png);
+}
+.playerFieldLeft {
+  background-image: url(../assets/images/presentAssets/leftRoom/labLeft.png);
+}
+.playerFieldRight {
+  background-image: url(../assets/images/presentAssets/rightRoom/labRight.png);
+}
+
+/*hiding spots */
+#boxSpot {
+  position: absolute;
+  bottom: 10%;
+  right: 15%;
+  width: 18%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#serverSpot {
+  position: absolute;
+  bottom: 20%;
+  left: 8%;
+  width: 22%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#boxSpot:hover,
+#serverSpot:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 10px gold);
+}
+
+.buttonLeft,
+.buttonRight {
+  bottom: 20px;
+  position: absolute;
+  padding: 10px 20px;
+  background-color: rgba(75, 0, 130, 0.8);
+  color: white;
+  font-size: 1.8vh;
+  border-radius: 8px;
+  text-decoration: none;
+  z-index: 10;
+  border: 1px solid white;
+  font-family: "Minecraft", sans-serif;
+}
 .buttonLeft {
+  left: 20px;
+}
+.buttonRight {
+  right: 20px;
+}
+
+#optionsContainer {
+  position: absolute;
+  bottom: 80px;
+  right: 30px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  width: 300px;
+}
+
+.btnDecisionOptions {
+  padding: 15px 25px;
+  font-size: 1.8vh;
+  background: #ffc107;
+  color: #222;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Minecraft", sans-serif;
+  transition: transform 0.1s;
+}
+.btnDecisionOptions:hover {
+  transform: scale(1.05);
+}
+
+#logoutButton {
+  position: absolute;
+  bottom: 20px;
+  right: 30px;
+  padding: 10px 20px;
+  background-color: #d32f2f;
+  color: white;
+  border: 2px solid white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Minecraft", sans-serif;
+  z-index: 2000;
+  font-size: 1.5vh;
+}
+#logoutButton:hover {
+  background-color: #b71c1c;
+}
+
+img.Hopper_Device_Broken {
+  height: 50%;
+  right: 32%;
+  top: 17%;
+  position: absolute;
+}
+img.Professor {
+  height: 40%;
+  position: absolute;
   bottom: 0;
   left: 0;
+}
+.machine {
+  height: 40%;
+  width: 20%;
+  right: 39%;
+  top: 22%;
   position: absolute;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 5;
+}
 
-  padding: 30px 40px;
-  background-color: #4b0082;
+.popupLeaderboard {
+  display: none; /* default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 5000;
+  justify-content: center;
+  align-items: center;
+}
+
+.leaderboardContent {
+  background: #2d1455;
+  border: 4px solid #ffc107;
+  padding: 30px;
+  border-radius: 15px;
+  width: 50%;
+  max-width: 600px;
+  text-align: center;
   color: white;
-  font-size: 20px;
-  border-radius: 12px;
-  text-decoration: none;
+  box-shadow: 0 0 20px #ffc107;
 }
 
-.buttonRight {
-  bottom: 0;
-  right: 0;
-  position: absolute;
-
-  padding: 30px 40px;
-  background-color: #4b0082;
-  color: white;
-  font-size: 20px;
-  border-radius: 12px;
-  text-decoration: none;
+.leaderboardContent h2 {
+  color: #ffc107;
+  margin-bottom: 20px;
+  font-size: 4vh;
 }
 
-.buttonLeft:hover {
-  background-color: #7b1fa2;
+.leaderboardList {
+  text-align: left;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 8px;
 }
 
-.buttonRight:hover {
-  background-color: #7b1fa2;
+.leaderboardEntry {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 2vh;
+}
+
+.closeLeaderboard {
+  background: #ffc107;
+  color: black;
+  border: none;
+  padding: 10px 30px;
+  font-size: 2vh;
+  cursor: pointer;
+  font-family: "Minecraft", sans-serif;
+  border-radius: 8px;
+}
+.closeLeaderboard:hover {
+  background: white;
 }
 
 img.Hopper_Device_Broken
