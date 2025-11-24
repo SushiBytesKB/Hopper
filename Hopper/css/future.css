@@ -355,10 +355,10 @@ body.future {
 
 #hopperMachine {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top:43%;
+  left: 51%;
   transform: translate(-50%, -50%);
-  width: clamp(220px, 24vw, 420px);
+  width: clamp(170px, 17vw, 380px);
   cursor: pointer;
   z-index: 6;
   filter: drop-shadow(0 0 10px rgba(0,255,153,0.4));
