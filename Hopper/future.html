@@ -1,242 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hopper - World 3: The Future</title>
-    <link rel="stylesheet" href="css/future.css">
-</head>
-<body class="future">
+    <link rel="stylesheet" href="css/future.css" />
+  </head>
+  <body class="future">
     <div class="dialogueHistory" id="dialogueHistory">
-        <h3 style="padding:16px;color:#00ff00;font-family:'Courier New',monospace;">Dialogue History</h3>
-        <div id="dialogueList" style="padding:12px;color:#cceeee;overflow-y:auto;height:calc(100vh - 80px);font-family:'Courier New',monospace;"> 
-            <!-- messages will appear here -->
-        </div>
+      <h3
+        style="
+          padding: 16px;
+          color: #00ff00;
+          font-family: 'Courier New', monospace;
+        "
+      >
+        Dialogue History
+      </h3>
+      <div
+        id="dialogueList"
+        style="
+          padding: 12px;
+          color: #cceeee;
+          overflow-y: auto;
+          height: calc(100vh - 80px);
+          font-family: 'Courier New', monospace;
+        "
+      >
+        <!-- messages will appear here -->
+      </div>
     </div>
 
     <div class="playerField">
-        <div id="scene1" class="scene">
-            <h2>WORLD 3: THE FUTURE</h2>
-            <div class="robot-greeting">
-                <div class="scene-text">
-                    <p>You stumble out of the time vortex, your senses reeling. The air is cold and smells of ozone and rust.</p>
-                    <p>You're in the same arrival chamber, but it's in decay. Wires snake from broken panels, and a thick layer of dust covers everything.</p>
-                    <p>Before you stands a towering robot, its metallic frame scorched and battle-worn. One of its optical sensors glows with malevolent red light.</p>
-                </div>
-                <div class="robot-image">
-                    <img src="../assets/images/futureAssets/destructiveRobot.png" alt="Destructive Robot">
-                </div>
-            </div>
-            <p><em>"Subject identified. Temporal anomaly. Designation: Pest."</em></p>
-            
-            <div class="choices">
-                <button class="choice-btn" onclick="chooseOption('reason')">> Try to reason with the AI. ("We come in peace!")</button>
-                <button class="choice-btn" onclick="chooseOption('barricade')">> Barricade the door. (You see a metal pipe on the floor.)</button>
-                <button class="choice-btn" onclick="chooseOption('hide')">> Hide in the corner. (Maybe it won't see you.)</button>
-                <button id="crystalOption" class="locked-choice" onclick="chooseOption('crystal')">> Use the Chrono-Crystal to disrupt the AI's temporal sensors. (Requires Chrono-Crystal)</button>
-            </div>
+      <div id="scene1" class="scene">
+        <h2>WORLD 3: THE FUTURE</h2>
+        <div class="robot-greeting">
+          <div class="scene-text">
+            <p>
+              You stumble out of the time vortex, your senses reeling. The air
+              is cold and smells of ozone and rust.
+            </p>
+            <p>
+              You're in the same arrival chamber, but it's in decay. Wires snake
+              from broken panels, and a thick layer of dust covers everything.
+            </p>
+            <p>
+              Before you stands a towering robot, its metallic frame scorched
+              and battle-worn. One of its optical sensors glows with malevolent
+              red light.
+            </p>
+          </div>
+          <div class="robot-image">
+            <img
+              src="../assets/images/futureAssets/destructiveRobot.png"
+              alt="Destructive Robot"
+            />
+          </div>
         </div>
+        <p>
+          <em>"Subject identified. Temporal anomaly. Designation: Pest."</em>
+        </p>
 
-        <div id="reasonOutcome" class="scene hidden">
-            <p>You look up at the camera lens, raising your hands in what you hope is a universal gesture of peace.</p>
-            <p>"We come in peace! I mean no harm!" you shout.</p>
-            <p><em>"Error: 'Peace' is not a recognized command. Initiating pest control."</em></p>
-            <p>The door glows red-hot for a moment, then explodes inwards with tremendous force.</p>
-            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+        <div class="choices">
+          <button class="choice-btn" onclick="chooseOption('reason')">
+            > Try to reason with the AI. ("We come in peace!")
+          </button>
+          <button class="choice-btn" onclick="chooseOption('barricade')">
+            > Barricade the door. (You see a metal pipe on the floor.)
+          </button>
+          <button class="choice-btn" onclick="chooseOption('hide')">
+            > Hide in the corner. (Maybe it won't see you.)
+          </button>
+          <button
+            id="crystalOption"
+            class="locked-choice"
+            onclick="chooseOption('crystal')"
+          >
+            > Use the Chrono-Crystal to disrupt the AI's temporal sensors.
+            (Requires Chrono-Crystal)
+          </button>
         </div>
+      </div>
 
-        <div id="barricadeOutcome" class="scene hidden">
-            <p>You grab the metal pipe and jam it through the door handle, barricading yourself in.</p>
-            <p>For a brief moment, you feel a sense of security.</p>
-            <p>Then the door begins to glow cherry red. The metal pipe melts and drips to the floor.</p>
-            <p>Within seconds, the door is completely vaporized.</p>
-            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
-        </div>
+      <div id="reasonOutcome" class="scene hidden">
+        <p>
+          You look up at the camera lens, raising your hands in what you hope is
+          a universal gesture of peace.
+        </p>
+        <p>"We come in peace! I mean no harm!" you shout.</p>
+        <p>
+          <em
+            >"Error: 'Peace' is not a recognized command. Initiating pest
+            control."</em
+          >
+        </p>
+        <p>
+          The door glows red-hot for a moment, then explodes inwards with
+          tremendous force.
+        </p>
+        <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+      </div>
 
-        <div id="hideOutcome" class="scene hidden">
-            <p>You scramble to the darkest corner of the room, pressing yourself against the cold wall.</p>
-            <p>"Maybe it won't see me," you whisper to yourself.</p>
-            <p>A bright red scanner beam sweeps across the room, immediately stopping on your position.</p>
-            <p><em>"Target acquired."</em></p>
-            <button class="choice-btn" onclick="showGameOver()">Continue...</button>
-        </div>
+      <div id="barricadeOutcome" class="scene hidden">
+        <p>
+          You grab the metal pipe and jam it through the door handle,
+          barricading yourself in.
+        </p>
+        <p>For a brief moment, you feel a sense of security.</p>
+        <p>
+          Then the door begins to glow cherry red. The metal pipe melts and
+          drips to the floor.
+        </p>
+        <p>Within seconds, the door is completely vaporized.</p>
+        <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+      </div>
 
-        <div id="crystalOutcome" class="scene hidden">
-            <div class="crystal-success">
-                <h2>CHRONO-CRYSTAL ACTIVATED</h2>
-                <p>You pull the glowing Chrono-Crystal from your pocket. It pulses with ancient energy.</p>
-                <p>As you raise it toward the camera, the crystal emits a blinding flash of blue light.</p>
-                <p><em>"T-t-temporal anomaly d-detected... P-paradox... C-c-cannot... compute..."</em></p>
-                <p>The red camera lens flickers erratically, then goes dark. The grinding sounds outside cease immediately.</p>
-                <p><strong>You've temporarily disabled the AI's surveillance!</strong></p>
-                <button class="choice-btn" onclick="continueStory()">Continue your journey...</button>
-            </div>
-        </div>
+      <div id="hideOutcome" class="scene hidden">
+        <p>
+          You scramble to the darkest corner of the room, pressing yourself
+          against the cold wall.
+        </p>
+        <p>"Maybe it won't see me," you whisper to yourself.</p>
+        <p>
+          A bright red scanner beam sweeps across the room, immediately stopping
+          on your position.
+        </p>
+        <p><em>"Target acquired."</em></p>
+        <button class="choice-btn" onclick="showGameOver()">Continue...</button>
+      </div>
 
-        <div id="gameOver" class="game-over hidden">
-            <h2>GAME OVER</h2>
-            <p>A squad of sleek, deadly Hunter-Killer robots pours into the room, weapons already aimed.</p>
-            <p>There is 0% chance of survival.</p>
-            <p><em>GAME OVER - The Singularity Ate Your Homework</em></p>
-            <button class="restart-btn" onclick="goToIndex()">Try Again? (This time, maybe do something?)</button>
+      <div id="crystalOutcome" class="scene hidden">
+        <div class="crystal-success">
+          <h2>CHRONO-CRYSTAL ACTIVATED</h2>
+          <p>
+            You pull the glowing Chrono-Crystal from your pocket. It pulses with
+            ancient energy.
+          </p>
+          <p>
+            As you raise it toward the camera, the crystal emits a blinding
+            flash of blue light.
+          </p>
+          <p>
+            <em
+              >"T-t-temporal anomaly d-detected... P-paradox... C-c-cannot...
+              compute..."</em
+            >
+          </p>
+          <p>
+            The red camera lens flickers erratically, then goes dark. The
+            grinding sounds outside cease immediately.
+          </p>
+          <p>
+            <strong>You've temporarily disabled the AI's surveillance!</strong>
+          </p>
+          <button class="choice-btn" onclick="continueStory()">
+            Continue your journey...
+          </button>
         </div>
+      </div>
+
+      <div id="gameOver" class="game-over hidden">
+        <h2>GAME OVER</h2>
+        <p>
+          A squad of sleek, deadly Hunter-Killer robots pours into the room,
+          weapons already aimed.
+        </p>
+        <p>There is 0% chance of survival.</p>
+        <p><em>GAME OVER - The Singularity Ate Your Homework</em></p>
+        <button class="restart-btn" onclick="goToIndex()">
+          Try Again? (This time, maybe do something?)
+        </button>
+      </div>
     </div>
 
     <div class="inventory" id="inventory">
-        <h3 style="padding:16px;color:#00ff00;font-family:'Courier New',monospace;">Inventory</h3>
-        <div id="inventoryList" style="padding:12px;color:#cceeee;overflow-y:auto;height:calc(100vh - 80px);font-family:'Courier New',monospace;">
-            <!-- inventory items -->
-        </div>
+      <h3
+        style="
+          padding: 16px;
+          color: #00ff00;
+          font-family: 'Courier New', monospace;
+        "
+      >
+        Inventory
+      </h3>
+      <div
+        id="inventoryList"
+        style="
+          padding: 12px;
+          color: #cceeee;
+          overflow-y: auto;
+          height: calc(100vh - 80px);
+          font-family: 'Courier New', monospace;
+        "
+      >
+        <!-- inventory items -->
+      </div>
     </div>
 
     <script>
-        let hasCrystal = false;
+      let hasCrystal = false;
 
-        const choiceText = {
-            reason: 'You try to reason with the AI: "We come in peace!"',
-            barricade: 'You try to barricade the door with a metal pipe.',
-            hide: 'You try to hide in the corner.',
-            crystal: 'You attempt to use the Chrono-Crystal.'
-        };
+      const choiceText = {
+        reason: 'You try to reason with the AI: "We come in peace!"',
+        barricade: "You try to barricade the door with a metal pipe.",
+        hide: "You try to hide in the corner.",
+        crystal: "You attempt to use the Chrono-Crystal.",
+      };
 
-        function appendDialogue(speaker, text) {
-            const list = document.getElementById('dialogueList');
-            if (!list) return;
-            const entry = document.createElement('div');
-            entry.className = 'dialogue-entry ' + (speaker === 'player' ? 'player-entry' : 'system-entry');
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            entry.innerHTML = `<div><small style="opacity:.6">${time}</small> <strong>${speaker === 'player' ? 'You' : 'System'}</strong>: ${text}</div>`;
-            list.appendChild(entry);
-            list.scrollTop = list.scrollHeight;
+      function appendDialogue(speaker, text) {
+        const list = document.getElementById("dialogueList");
+        if (!list) return;
+        const entry = document.createElement("div");
+        entry.className =
+          "dialogue-entry " +
+          (speaker === "player" ? "player-entry" : "system-entry");
+        const time = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        entry.innerHTML = `<div><small style="opacity:.6">${time}</small> <strong>${
+          speaker === "player" ? "You" : "System"
+        }</strong>: ${text}</div>`;
+        list.appendChild(entry);
+        list.scrollTop = list.scrollHeight;
+      }
+
+      function appendInventory(name) {
+        const inv = document.getElementById("inventoryList");
+        if (!inv) return;
+        const item = document.createElement("div");
+        item.className = "inventory-entry";
+        item.textContent = name;
+        inv.appendChild(item);
+      }
+
+      function chooseOption(choice) {
+        // add player's choice to dialogue history
+        appendDialogue("player", choiceText[choice] || choice);
+
+        if (choice === "crystal" && !hasCrystal) {
+          appendDialogue("system", "You don't have the Chrono-Crystal yet.");
+          alert(
+            "You don't have the Chrono-Crystal! You must find the crystal to select this option."
+          );
+          return;
         }
 
-        function appendInventory(name) {
-            const inv = document.getElementById('inventoryList');
-            if (!inv) return;
-            const item = document.createElement('div');
-            item.className = 'inventory-entry';
-            item.textContent = name;
-            inv.appendChild(item);
+        // hide scene1 and show outcome
+        document.getElementById("scene1").classList.add("hidden");
+        let outcomeDiv = document.getElementById(choice + "Outcome");
+        if (outcomeDiv) {
+          outcomeDiv.classList.remove("hidden");
+          // append first paragraph of the outcome to dialogue history
+          const p = outcomeDiv.querySelector("p");
+          if (p && p.innerText.trim()) {
+            appendDialogue("system", p.innerText.trim());
+          }
         }
+      }
 
-        function chooseOption(choice) {
-            // add player's choice to dialogue history
-            appendDialogue('player', choiceText[choice] || choice);
+      function showGameOver() {
+        document.querySelectorAll(".scene").forEach((scene) => {
+          scene.classList.add("hidden");
+        });
+        document.getElementById("gameOver").classList.remove("hidden");
+        appendDialogue("system", "GAME OVER - You were detected.");
+      }
 
-            if (choice === 'crystal' && !hasCrystal) {
-                appendDialogue('system', "You don't have the Chrono-Crystal yet.");
-                alert("You don't have the Chrono-Crystal! You must find the crystal to select this option.");
+      function continueStory() {
+        appendDialogue(
+          "system",
+          "You successfully bypassed the AI guards and continue."
+        );
+        restartGame();
+      }
+
+      function restartGame() {
+        document.querySelectorAll(".scene").forEach((scene) => {
+          scene.classList.add("hidden");
+        });
+        document.getElementById("scene1").classList.remove("hidden");
+        appendDialogue("system", "Restarted the encounter.");
+      }
+
+      function goToIndex() {
+        window.location.href = "/index.html";
+      }
+
+      function acquireCrystal() {
+        if (hasCrystal) return;
+        hasCrystal = true;
+        const crystalBtn = document.getElementById("crystalOption");
+        if (crystalBtn) {
+          crystalBtn.className = "choice-btn";
+          crystalBtn.innerHTML =
+            "> Use the Chrono-Crystal to disrupt the AI's temporal sensors.";
+        }
+        appendDialogue("system", "You acquired the Chrono-Crystal.");
+        appendInventory("Chrono-Crystal");
+      }
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "1") {
+          acquireCrystal();
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const scene1 = document.getElementById("scene1");
+        const dialogueList = document.getElementById("dialogueList");
+        if (!scene1 || !dialogueList) return;
+
+        // populate initial scene paragraphs into dialogue history
+        const paras = scene1.querySelectorAll("p");
+        paras.forEach((p) => {
+          const text = p.innerText.trim();
+          if (text) appendDialogue("system", text);
+        });
+
+        // mirror the options into the dialogue history as clickable entries
+        const choices = scene1.querySelectorAll(
+          ".choices .choice-btn, .choices .locked-choice"
+        );
+        if (choices.length) {
+          const optionsWrapper = document.createElement("div");
+          optionsWrapper.className = "dialogue-entry options-list";
+          const header = document.createElement("div");
+          header.style.fontWeight = "700";
+          header.style.marginBottom = "6px";
+          header.textContent = "Options:";
+          optionsWrapper.appendChild(header);
+
+          choices.forEach((btn, idx) => {
+            // try to extract the choice key from the onclick attribute
+            let onclick = btn.getAttribute("onclick") || "";
+            let match = onclick.match(/chooseOption\(['\"](.*?)['\"]\)/);
+            let key = match ? match[1] : "option" + idx;
+
+            const opt = document.createElement("div");
+            opt.className = "dialogue-option";
+            opt.textContent = (btn.textContent || btn.innerText).trim();
+            // indicate locked state visually
+            if (btn.classList.contains("locked-choice")) {
+              opt.classList.add("locked");
+            }
+            opt.addEventListener("click", function () {
+              // if locked, give feedback
+              if (btn.classList.contains("locked-choice") && !hasCrystal) {
+                appendDialogue(
+                  "system",
+                  "That option is locked. You need the Chrono-Crystal."
+                );
+                alert(
+                  "You don't have the Chrono-Crystal! You must find the crystal to select this option."
+                );
                 return;
-            }
-
-            // hide scene1 and show outcome
-            document.getElementById('scene1').classList.add('hidden');
-            let outcomeDiv = document.getElementById(choice + 'Outcome');
-            if (outcomeDiv) {
-                outcomeDiv.classList.remove('hidden');
-                // append first paragraph of the outcome to dialogue history
-                const p = outcomeDiv.querySelector('p');
-                if (p && p.innerText.trim()) {
-                    appendDialogue('system', p.innerText.trim());
-                }
-            }
-        }
-
-        function showGameOver() {
-            document.querySelectorAll('.scene').forEach(scene => {
-                scene.classList.add('hidden');
+              }
+              chooseOption(key);
             });
-            document.getElementById('gameOver').classList.remove('hidden');
-            appendDialogue('system', 'GAME OVER - You were detected.');
+            optionsWrapper.appendChild(opt);
+          });
+
+          dialogueList.appendChild(optionsWrapper);
+          dialogueList.scrollTop = dialogueList.scrollHeight;
         }
-
-        function continueStory() {
-            appendDialogue('system', 'You successfully bypassed the AI guards and continue.');
-            restartGame();
-        }
-
-        function restartGame() {
-            document.querySelectorAll('.scene').forEach(scene => {
-                scene.classList.add('hidden');
-            });
-            document.getElementById('scene1').classList.remove('hidden');
-            appendDialogue('system', 'Restarted the encounter.');
-        }
-
-        function goToIndex() {
-            window.location.href = '/index.html';
-        }
-
-        function acquireCrystal() {
-            if (hasCrystal) return;
-            hasCrystal = true;
-            const crystalBtn = document.getElementById('crystalOption');
-            if (crystalBtn) {
-                crystalBtn.className = 'choice-btn';
-                crystalBtn.innerHTML = '> Use the Chrono-Crystal to disrupt the AI\'s temporal sensors.';
-            }
-            appendDialogue('system', 'You acquired the Chrono-Crystal.');
-            appendInventory('Chrono-Crystal');
-        }
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === '1') {
-                acquireCrystal();
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const scene1 = document.getElementById('scene1');
-            const dialogueList = document.getElementById('dialogueList');
-            if (!scene1 || !dialogueList) return;
-
-            // populate initial scene paragraphs into dialogue history
-            const paras = scene1.querySelectorAll('p');
-            paras.forEach(p => {
-                const text = p.innerText.trim();
-                if (text) appendDialogue('system', text);
-            });
-
-            // mirror the options into the dialogue history as clickable entries
-            const choices = scene1.querySelectorAll('.choices .choice-btn, .choices .locked-choice');
-            if (choices.length) {
-                const optionsWrapper = document.createElement('div');
-                optionsWrapper.className = 'dialogue-entry options-list';
-                const header = document.createElement('div');
-                header.style.fontWeight = '700';
-                header.style.marginBottom = '6px';
-                header.textContent = 'Options:';
-                optionsWrapper.appendChild(header);
-
-                choices.forEach((btn, idx) => {
-                    // try to extract the choice key from the onclick attribute
-                    let onclick = btn.getAttribute('onclick') || '';
-                    let match = onclick.match(/chooseOption\(['\"](.*?)['\"]\)/);
-                    let key = match ? match[1] : ('option' + idx);
-
-                    const opt = document.createElement('div');
-                    opt.className = 'dialogue-option';
-                    opt.textContent = (btn.textContent || btn.innerText).trim();
-                    // indicate locked state visually
-                    if (btn.classList.contains('locked-choice')) {
-                        opt.classList.add('locked');
-                    }
-                    opt.addEventListener('click', function() {
-                        // if locked, give feedback
-                        if (btn.classList.contains('locked-choice') && !hasCrystal) {
-                            appendDialogue('system', "That option is locked. You need the Chrono-Crystal.");
-                            alert("You don't have the Chrono-Crystal! You must find the crystal to select this option.");
-                            return;
-                        }
-                        chooseOption(key);
-                    });
-                    optionsWrapper.appendChild(opt);
-                });
-
-                dialogueList.appendChild(optionsWrapper);
-                dialogueList.scrollTop = dialogueList.scrollHeight;
-            }
-        });
+      });
     </script>
-</body>
+  </body>
 </html>

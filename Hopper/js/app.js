@@ -6,7 +6,7 @@ import * as uiService from "./uiService.js";
 import * as gameLogic from "./gameLogic.js";
 
 let currentUser = null;
-let currentUserName = "Traveler"; // leaderboard username, kept it as traveler in case we wanna later allow anonymous users to submit score.
+let currentUserName = "Traveler";
 
 document.addEventListener("DOMContentLoaded", () => {
   attachUIListeners();
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     if (user) {
-      console.log("User is signed in");
+      console.log("User signed in:", user.uid);
       await loadGameForUser(user.uid);
     } else {
       console.log("Guest/No User");
@@ -50,7 +50,7 @@ async function loadGameForUser(uid) {
       hasCloak: userData.inventory.hasCloak,
       hasBow: userData.inventory.hasBow,
       hasPicture: userData.inventory.hasPicture,
-      numOfHops: userData.numOfHops,
+      numOfHops: userData.numOfHops || 2,
       hidingSpots: userData.hidingSpots || {},
       itemAssignments: userData.itemAssignments || {},
       startTime: userData.startTime,
@@ -62,6 +62,7 @@ async function loadGameForUser(uid) {
     const visualInventory = [];
     const inventoryPathState = [];
 
+    // Load visual inventory
     if (userData.inventory.hasHarmonyCrystal) {
       const path = gameLogic.itemDefinitions.crystal.path;
       visualInventory.push(path);
@@ -81,6 +82,11 @@ async function loadGameForUser(uid) {
       visualInventory.push(path);
       inventoryPathState.push(path);
     }
+    if (userData.inventory.hasPicture) {
+      const path = gameLogic.itemDefinitions.picture.path;
+      visualInventory.push(path);
+      inventoryPathState.push(path);
+    }
 
     gameLogic.setState({ inventory: inventoryPathState });
     uiService.updateInventoryUI(visualInventory);
@@ -89,6 +95,7 @@ async function loadGameForUser(uid) {
       uiService.renderDialogue(userData.dialogueHistory);
     }
 
+    // Only run game interactions if we are on a game page
     if (
       document.querySelector(".playerField") ||
       document.querySelector(".playerFieldLeft") ||
@@ -133,8 +140,8 @@ function setupGameInteractions() {
       const pageKey = gameLogic.getNodeForPage(window.location.pathname);
       const node = gameLogic.decisionPoints[pageKey];
       if (node) {
-        uiService.typeNewDialogueLine(node.text);
-        uiService.renderOptions(node.options, handleOptionClick);
+        // Don't re-type text if options are already open? No, machine click implies interaction.
+        processNode(node);
       }
     });
   }
@@ -231,7 +238,11 @@ async function handleItemPickup(itemId, elementId) {
     newState[itemDef.stateKey] = true;
     gameLogic.setState(newState);
 
-    uiService.hideElement(`#${elementId}`);
+    // Only hide element if it exists
+    if (elementId) {
+      uiService.hideElement(`#${elementId}`);
+    }
+
     handleDialogueUpdate(itemDef.successMessage);
     uiService.updateInventoryUI(newInventory);
 
@@ -250,10 +261,22 @@ async function handleItemPickup(itemId, elementId) {
 }
 
 function handleOptionClick(option) {
+  if (option.next === "restart") {
+    if (currentUser) {
+      dataService.resetUserGame(currentUser.uid).then(() => {
+        window.location.href = "present.html";
+      });
+    } else {
+      window.location.href = "index.html";
+    }
+    return;
+  }
+
   if (option.next.includes(".html")) {
     window.location.href = option.next;
     return;
   }
+
   const nextNode = gameLogic.decisionPoints[option.next];
   if (nextNode.condition) {
     const state = gameLogic.getState();
@@ -267,6 +290,10 @@ function handleOptionClick(option) {
 
 async function processNode(node) {
   handleDialogueUpdate(node.text);
+
+  if (node.grantItem) {
+    handleItemPickup(node.grantItem, null);
+  }
 
   if (node.isEnding && currentUser && !gameLogic.getState().gameEnded) {
     await dataService.saveUserProgress(currentUser.uid, { gameEnded: true });

@@ -3,7 +3,6 @@ let playerState = {
   hasCloak: false,
   hasBow: false,
   hasPicture: false,
-  numOfHops: 2,
   dialogueHistory: [],
   inventory: [],
   hidingSpots: {},
@@ -56,8 +55,6 @@ export const itemDefinitions = {
   picture: {
     id: "picture",
     path: "assets/images/futureAssets/Photo_of_the_Destructive_Future.png",
-    revealedImage:
-      "assets/images/futureAssets/Photo_of_the_Destructive_Future.png",
     successMessage: "Destructive Robot: ALERT! Unusual activity detected!",
     stateKey: "hasPicture",
     dbKey: "inventory.hasPicture",
@@ -180,6 +177,7 @@ export const decisionPoints = {
 
   futureWithCloak: {
     text: "You peek out beneath you Cloak of Invisibility and to your surprise, the Cyborgs actually look right through you as if you were not there. This buys you enough time to grab your trusty camera and snap a quick picture of the disaster.",
+    grantItem: "picture",
     options: [
       // pic logic
       { button: "Escape to Present", text: "Run!", next: "present.html" },
@@ -190,7 +188,7 @@ export const decisionPoints = {
     isEnding: true,
     text: "BAD ENDING: The machine fails without the crystal. You are stuck. You successfully made a useless trip to the Past and have gained nothing but experience. The Harmony Crystal is still destroyed and lost ... the Hopper machine clanks one last time before falling apart.",
     options: [
-      { button: "Play Again", text: "Playing again...", next: "index.html" },
+      { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
   },
 
@@ -198,7 +196,7 @@ export const decisionPoints = {
     isEnding: true,
     text: "NEUTRAL ENDING: Wait... this is... my bow? I though I would never see it ever again. My grandfather crafted it out of the Elderwood tree my ancestors planted. I saw it burn to a crisp in front of my eyes during an attack. You have the bow, but the future is still bleak.",
     options: [
-      { button: "Play Again", text: "Playing again...", next: "index.html" },
+      { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
   },
 
@@ -206,7 +204,7 @@ export const decisionPoints = {
     isEnding: true,
     text: "NEUTRAL ENDING: Hold on let me see this ... what is going on here? Is this really what my research would do to this world? I guess I have to think it over and make some adjustments to prevent this. You have the photo. You can warn the world, but you lack defense.",
     options: [
-      { button: "Play Again", text: "Playing again...", next: "index.html" },
+      { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
   },
 
@@ -214,7 +212,7 @@ export const decisionPoints = {
     isEnding: true,
     text: "BAD ENDING: Thank you so so much my dear friend! Finally, the last puzzle piece to my success in creating the strongest AI the world has ever seen. I thank you endlessly! You fixed the machine but have no artifacts. The timeline remains broken.",
     options: [
-      { button: "Play Again", text: "Playing again...", next: "index.html" },
+      { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
   },
 
@@ -222,7 +220,7 @@ export const decisionPoints = {
     isEnding: true,
     text: "GOOD ENDING: This is ... WHAT? My bow!! AND my invention will destroy the future of this planet?! What am I doing? What have I done? I thank you deeply my friend ... I guess ... NO ... I KNOW that I will stop and halt everything right this moment and return to a peaceful life and maybe take little Tro with me. With the Crystal, Bow, and Photo, you save the timeline!",
     options: [
-      { button: "Play Again", text: "Playing again...", next: "index.html" },
+      { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
   },
 
@@ -230,7 +228,7 @@ export const decisionPoints = {
     isEnding: true,
     text: "GAME OVER: You moron went to the Future well knowing that you had only one Hop left. The Cyborg shot you the second you stepped foot into this timeline as you had neither escape nor defense. The robots detected you immediately.",
     options: [
-      { button: "Play Again", text: "Playing again...", next: "index.html" },
+      { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
   },
 
