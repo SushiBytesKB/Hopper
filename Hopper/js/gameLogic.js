@@ -206,7 +206,7 @@ export const decisionPoints = {
 
   presentNoCrystal: {
     isEnding: true,
-    text: "BAD ENDING: The machine fails without the crystal. You are stuck. You successfully made a useless trip to the Past and have gained nothing but experience. The Harmony Crystal is still destroyed and lost ... the Hopper machine clanks one last time before falling apart.",
+    text: "BAD ENDING: The machine fails without the crystal. You are stuck. The Harmony Crystal is still destroyed and lost ... the Hopper machine clanks one last time before falling apart.",
     options: [
       { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
@@ -214,7 +214,7 @@ export const decisionPoints = {
 
   neutralEndingHasBow: {
     isEnding: true,
-    text: "NEUTRAL ENDING: Wait... this is... my bow? I though I would never see it ever again. My grandfather crafted it out of the Elderwood tree my ancestors planted. I saw it burn to a crisp in front of my eyes during an attack. You have the bow, but the future is still bleak.",
+    text: "NEUTRAL ENDING: Wait... this is... my bow? I though I would never see it ever again. My grandfather crafted it out of the Elderwood tree my ancestors planted. I saw it burn to a crisp in front of my eyes during an attack. Maybe I can change the AI i am working on... You have the bow, but the future is still bleak.",
     options: [
       { button: "Play Again", text: "Playing again...", next: "restart" },
     ],
