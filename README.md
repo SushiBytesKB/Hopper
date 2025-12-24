@@ -11,7 +11,7 @@ Hopper is a fully web-based, narrative-driven game that explores non-linear stor
 ## Live Demo
 
 👉 **Play Hopper here:**
-**[]**
+**[https://sushibyteskb.github.io/Hopper/]**
 
 > Best experienced in **Google Chrome**
 
